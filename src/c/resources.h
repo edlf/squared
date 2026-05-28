@@ -6,8 +6,6 @@
 extern const char * locales[6];
 extern const char * weekdays[6][7];
 
-extern const uint8_t character_map[122];
-extern const uint8_t characters[64][10];
 extern const uint8_t progress_top_seq[19];
 extern const uint8_t startDigit[18];
 extern const uint8_t variation[100];
@@ -23,4 +21,6 @@ extern const uint8_t character_base_color_presets[NUMBER_OF_CHAR_PRESETS];
 extern const bool    character_variation_presets[NUMBER_OF_CHAR_PRESETS];
 #endif
 
-#endif /* end of include guard: RESOURCES_H */
+uint8_t fetch_rect(const uint8_t digit, const uint8_t x, const uint8_t y, const bool mirror);
+
+#endif

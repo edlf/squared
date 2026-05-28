@@ -1,71 +1,72 @@
 {
-  "author": "edlf",
-  "dependencies": {
-    "pebble-clay": "^1.0.4"
-  },
-  "keywords": [],
-  "name": "squaredc",
-  "pebble": {
-    "capabilities": [
-      "configurable",
-      "health"
-    ],
-    "displayName": "Squared",
-    "enableMultiJS": true,
-    "messageKeys": {
-      "large_mode": 0,
-      "eu_date": 1,
-      "quick_start": 2,
-      "leading_zero": 3,
-      "background_color": 4,
-      "number_base_color": 5,
-      "number_variation": 6,
-      "ornament_base_color": 7,
-      "ornament_variation": 8,
-      "invert": 9,
-      "monochrome": 10,
-      "center": 11,
-      "btvibe": 12,
-      "contrast": 13,
-      "nightsaver": 14,
-      "ns_start": 15,
-      "ns_stop": 16,
-      "backlight": 17,
-      "weekday": 18,
-      "bottomrow": 19,
-      "wristflick": 20,
-      "stepgoal": 21,
-      "cheeky": 22,
-      "dynamicstepgoal": 23,
-      "battery_saver": 24,
-      "use_presets": 25,
-      "bg_preset": 26,
-      "numbers_preset": 27,
-      "ornaments_preset": 28
+    "author": "edlf",
+    "dependencies": {
+        "pebble-clay": "^1.0.4"
     },
-    "projectType": "native",
-    "resources": {
-      "media": [
-        {
-          "file": "images/menuicon.png",
-          "menuIcon": true,
-          "name": "MENU_ICON",
-          "targetPlatforms": null,
-          "type": "bitmap"
+    "keywords": [],
+    "name": "squaredc",
+    "pebble": {
+        "capabilities": [
+            "configurable",
+            "health"
+        ],
+        "displayName": "Squared",
+        "enableMultiJS": true,
+        "messageKeys": {
+            "background_color": 3,
+            "backlight": 17,
+            "battery_saver": 24,
+            "bg_preset": 26,
+            "bottomrow": 19,
+            "btvibe": 11,
+            "center": 10,
+            "cheeky": 22,
+            "contrast": 12,
+            "contrast_force": 13,
+            "dynamicstepgoal": 23,
+            "eu_date": 0,
+            "invert": 8,
+            "leading_zero": 2,
+            "monochrome": 9,
+            "nightsaver": 14,
+            "ns_start": 15,
+            "ns_stop": 16,
+            "number_base_color": 4,
+            "number_variation": 5,
+            "numbers_preset": 27,
+            "ornament_base_color": 6,
+            "ornament_variation": 7,
+            "ornaments_preset": 28,
+            "quick_start": 1,
+            "stepgoal": 21,
+            "use_presets": 25,
+            "weekday": 18,
+            "wristflick": 20
+        },
+        "projectType": "native",
+        "resources": {
+            "media": [
+                {
+                    "file": "images/menuicon.png",
+                    "menuIcon": true,
+                    "name": "MENU_ICON",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                }
+            ]
+        },
+        "sdkVersion": "3",
+        "targetPlatforms": [
+            "aplite",
+            "basalt",
+            "chalk",
+            "diorite",
+            "emery"
+        ],
+        "uuid": "ce36c845-1ff5-418a-b7b1-b56e914d76bd",
+        "watchapp": {
+            "watchface": true
         }
-      ]
     },
-    "sdkVersion": "3",
-    "targetPlatforms": [
-      "aplite",
-      "basalt",
-      "chalk",
-      "diorite"
-    ],
-    "uuid": "ce36c845-1ff5-418a-b7b1-b56e914d76bd",
-    "watchapp": {
-      "watchface": true
-    }
-  },
-  "version": "5.0.0"
+    "version": "6.0.0"
 }

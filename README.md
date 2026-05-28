@@ -1,4 +1,4 @@
-# Squared 5.0
+# Squared 6.0
 
 A Pebble Watchface for Pebble, Pebble Time and Pebble Time Round
 
@@ -7,12 +7,12 @@ A Pebble Watchface for Pebble, Pebble Time and Pebble Time Round
  * SDK 3.0 port and colorizing by hexahedria
  * Adaptations for Chalk and Aplite by lastfuture
  * Refactor and configurable colors by edlf
- * Clay port by edlf (no internet needed for configuration)
- * Battery usage optimization by edlf
+ * Use clay instead of hosted config page by edlf (offline config)
+ * Ported to Pebble Time 2, might introduce regressions on round watches
+ * Big font mode removed
 
 ## Notes
  * Clay configuration page does not hide elements that are ignored if others are enabled. This is purely cosmetic though.
- * The slim variant (other branch) has less features but is more battery friendly.
 
 ## TODO
  * Fix redraw on return from menu

@@ -562,7 +562,7 @@ const uint8_t progress_top_seq[19] = {
 };
 
 const uint8_t startDigit[18] = {
-	11,12,12,11,11,12,10,13,12,11,12,11,11,12,10,13,12,10 // 2x h, 2x m, 4x date, 2x filler top, 4x filler sides, 2x filler bottom, 2x filler bottom sides
+  11,12,12,11,11,12,10,13,12,11,12,11,11,12,10,13,12,10 // 2x h, 2x m, 4x date, 2x filler top, 4x filler sides, 2x filler bottom, 2x filler bottom sides
 };
 
 const uint8_t variation[100] = {
@@ -674,4 +674,24 @@ const bool character_variation_presets[NUMBER_OF_CHAR_PRESETS] = {
   false,
   false
 };
+
 #endif
+
+uint8_t fetch_rect(const uint8_t digit, const uint8_t x, const uint8_t y, const bool mirror) {
+  // character_map maps 0-9 (digits), 10-13 (ornaments), ascii codes of uppercase letters and 100-109 (progress) to characters[]
+  uint8_t color1 = characters[character_map[digit]][(y*2)]; // get one row of digit colors
+  uint8_t color2 = characters[character_map[digit]][(y*2)+1]; // get one row of ornament colors
+  uint8_t mask = 0b10000 >> x;
+
+  if (mirror) {
+    mask = 0b00001 << x;
+  }
+
+  if (color1 & mask) { // check column of row
+    return 1;
+  } else if (color2 & mask) {
+    return 2;
+  } else {
+    return 0;
+  }
+}

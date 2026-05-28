@@ -1,28 +1,39 @@
 #include "state.h"
 
+// Drawing constants
+// Base tile size
+const uint8_t tile_size = (SCREEN_SIZE_X / 14); // 14 for PT2
+// Small tile size, half the size as a regular tile -1 for width compensation
+const uint8_t tile_size_small = (SCREEN_SIZE_X / 14) / 2 - 1; // 6 for PT2
+
+// Font blocks
+const uint8_t font_width_blocks = 5;
+const uint8_t font_height_blocks = 5;
+const uint8_t font_total_blocks = font_width_blocks * font_height_blocks; //25
+
+const uint8_t font_width = font_width_blocks * tile_size; // 70
+const uint8_t font_height = font_height_blocks * tile_size;
+
+const uint8_t font_width_small = font_width_blocks * tile_size_small; // 30
+const uint8_t font_height_small = font_height_blocks * tile_size_small;
+
+// Spacing
+const uint8_t spacing_x = tile_size;
+const uint8_t spacing_y = tile_size;
+
+// Calculate total size
+const uint8_t active_area_x = font_width + spacing_x + font_width;
+const uint8_t active_area_y = font_height + spacing_y + font_height + spacing_y + font_height_small;
+
+
 void state_init(State *state) {
-  state->tile_size = 10;
-  state->num_slots = NUM_SLOTS;
-
-  state->spacing_x = state->tile_size;
-  state->spacing_y = state->tile_size;
-
-  state->font_width_blocks = 5;
-  state->font_height_blocks = 5;
-  state->total_blocks = state->font_width_blocks * state->font_height_blocks;
-
-  state->font_width = state->font_width_blocks * state->tile_size;
-  state->font_height = state->font_height_blocks * state->tile_size;
-
-  state->tiles_x = state->font_width + state->spacing_x + state->font_width;
-  state->tiles_y = state->font_height_blocks + state->spacing_y + state->font_height_blocks;
-
   #ifdef PBL_RECT
-  state->origin_x = (144 - state->tiles_x) / 2;
-  state->origin_y = state->tile_size * 1.5;
+  state->origin_x = (SCREEN_SIZE_X - active_area_x) / 2;
+  state->origin_y = (SCREEN_SIZE_Y - active_area_y) / 2;
   #else
-  state->origin_x = (180 - state->tiles_x) / 2;
-  state->origin_y = state->tile_size * 2.2;
+  // TODO: Fix new bigger round
+  state->origin_x = (180 - active_area_x) / 2;
+  state->origin_y = tile_size * 2.2;
   #endif
 
   state->splashEnded = false;
@@ -45,39 +56,6 @@ void state_init(State *state) {
 }
 
 void state_update(State* state, Preferences* preferences) {
-  if (preferences->large_mode) {
-    state->spacing_y = state->tile_size - 1;
-  }
-
-  #ifndef PBL_ROUND
-  if(preferences->large_mode) {
-    state->tile_size = 12;
-  } else {
-    state->tile_size = 10;
-  }
-  #endif
-
-
-  #ifdef PBL_RECT
-  state->origin_x = (144 - state->tiles_x) / 2;
-
-  if (preferences->large_mode) {
-    state->origin_y = 1;
-  } else {
-    state->origin_y = state->tile_size * 1.5;
-  }
-
-  #else
-  state->origin_x = (180 - state->tiles_x) / 2;
-  state->origin_y = state->tile_size * 2.2;
-  #endif
-
-  state->font_width = state->font_width_blocks * state->tile_size;
-  state->font_height = state->font_height_blocks * state->tile_size;
-
-  state->tiles_x = state->font_width + state->spacing_x + state->font_width;
-  state->tiles_y = state->font_height_blocks + state->spacing_y + state->font_height_blocks;
-
   state->background_color = (GColor8) { .argb = preferences->background_color };
 
   #ifdef PBL_COLOR

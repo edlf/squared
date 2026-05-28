@@ -1,7 +1,6 @@
 #include "preferences.h"
 
 void preferences_set_defaults(Preferences *preferences){
-   preferences->large_mode = false;
    preferences->eu_date = true;
    preferences->quick_start = false;
    preferences->leading_zero = false;
@@ -35,7 +34,6 @@ void preferences_set_defaults(Preferences *preferences){
 }
 
 void preferences_load(DictionaryIterator *iter, Preferences *preferences) {
-  Tuple *large_mode_t = dict_find(iter, KEY_LARGE_MODE);
   Tuple *eu_date_t = dict_find(iter, KEY_EU_DATE);
   Tuple *quick_start_t = dict_find(iter, KEY_QUICK_START);
   Tuple *leading_zero_t = dict_find(iter, KEY_LEADING_ZERO);
@@ -67,7 +65,6 @@ void preferences_load(DictionaryIterator *iter, Preferences *preferences) {
   Tuple *ornament_preset_t = dict_find(iter, KEY_ORNAMENT_PRESET);
   #endif
 
-  if (large_mode_t) {          preferences->large_mode =             large_mode_t->value->int8; }
   if (eu_date_t) {             preferences->eu_date =                eu_date_t->value->int8; }
   if (quick_start_t) {         preferences->quick_start =            quick_start_t->value->int8; }
   if (leading_zero_t) {        preferences->leading_zero =           leading_zero_t->value->int8; }

@@ -8,41 +8,39 @@
 #define PREFERENCES_KEY 0
 
 typedef struct {
-  bool large_mode;
-  bool eu_date; // true == MM/DD, false == DD/MM
-  bool quick_start;
-  bool leading_zero; // true == replaces leading Zero for hour, day, month with a "cycler"
-  uint8_t background_color;
-  uint8_t number_base_color;
-  bool number_variation;
-  uint8_t ornament_base_color;
-  bool ornament_variation;
-  bool invert;
-  bool monochrome;
-  bool center;
-  bool btvibe;
-  bool contrast;
-  bool nightsaver;
-  uint8_t ns_start;
-  uint8_t ns_stop;
-  bool backlight;
-  bool weekday;
-  uint8_t bottomrow;
-  uint8_t wristflick;
+  bool     eu_date; // true == MM/DD, false == DD/MM
+  bool     quick_start;
+  bool     leading_zero; // true == replaces leading Zero for hour, day, month with a "cycler"
+  uint8_t  background_color;
+  uint8_t  number_base_color;
+  bool     number_variation;
+  uint8_t  ornament_base_color;
+  bool     ornament_variation;
+  bool     invert;
+  bool     monochrome;
+  bool     center;
+  bool     btvibe;
+  bool     contrast;
+  bool     nightsaver;
+  uint8_t  ns_start;
+  uint8_t  ns_stop;
+  bool     backlight;
+  bool     weekday;
+  uint8_t  bottomrow;
+  uint8_t  wristflick;
   uint16_t stepgoal;
-  bool dynamicstepgoal;
-  bool cheeky;
-  bool battery_saver;
+  bool     dynamicstepgoal;
+  bool     cheeky;
+  bool     battery_saver;
   #ifdef PBL_COLOR
-  bool use_presets;
-  uint8_t bg_preset;
-  uint8_t number_preset;
-  uint8_t ornament_preset;
+  bool     use_presets;
+  uint8_t  bg_preset;
+  uint8_t  number_preset;
+  uint8_t  ornament_preset;
   #endif
 } Preferences;
 
 enum {
-  KEY_LARGE_MODE,
   KEY_EU_DATE,
   KEY_QUICK_START,
   KEY_LEADING_ZERO,

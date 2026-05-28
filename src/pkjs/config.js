@@ -260,11 +260,6 @@ module.exports = [{
     "messageKey": "leading_zero",
     "label": "Leading Zeros",
     "defaultValue": false
-  }, {
-    "type": "toggle",
-    "messageKey": "large_mode",
-    "label": "Large Numbers",
-    "defaultValue": false
   }]
 }, {
   "type": "section",

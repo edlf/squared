@@ -9,16 +9,15 @@
 #include <pebble.h>
 #include "utils.h"
 #include "preferences.h"
-#include "date.h"
 #include "resources.h"
-#include "digit_slot.h"
+#include "squared_slots.h"
 #include "state.h"
 
 // #define DEBUG
+// #define TEST_TICK
 
 Window *window;
 Preferences prefs;
-Date curDate;
 
 digitSlot slot[NUM_SLOTS];
 static char weekday_buffer[2];
@@ -26,114 +25,20 @@ AnimationImplementation animImpl;
 Animation *anim;
 static State state;
 
-static void handle_bluetooth(bool connected) {
+static void handle_bluetooth(const bool connected) {
   if (!quiet_time_is_active() && prefs.btvibe && !connected) {
     static const uint32_t segments[] = { 200, 200, 50, 150, 200 };
 
     VibePattern pat = {
-    	.durations = segments,
-    	.num_segments = ARRAY_LENGTH(segments),
+      .durations = segments,
+      .num_segments = ARRAY_LENGTH(segments),
     };
 
     vibes_enqueue_custom_pattern(pat);
   }
 }
 
-static GRect slot_frame(int8_t i) {
-	int16_t x, y, w, h;
-
-	if (i < 4) { // main digits
-		w = state.font_width;
-		h = state.font_height;
-
-		if (i % 2) {
-			x = state.origin_x + state.font_width + state.spacing_x; // i = 1 or 3
-		} else {
-			x = state.origin_x; // i = 0 or 2
-		}
-
-		if (i < 2) {
-			y = state.origin_y;
-		} else {
-			y = state.origin_y + state.font_height + state.spacing_y;
-		}
-
-	} else if (i < 8) { // date digits
-		w = state.font_width/2;
-		h = state.font_height/2;
-		x = state.origin_x + (state.font_width + state.spacing_x) * (i - 4) / 2;
-		y = state.origin_y + (state.font_height + state.spacing_y) * 2;
-
-	} else if (i < 10) { // top filler for round
-    w = state.font_width;
-		h = state.font_height;
-
-    if (i % 2) {
-			x = state.origin_x + state.font_width + state.spacing_x; // i = 1 or 3
-		} else {
-			x = state.origin_x; // i = 0 or 2
-		}
-
-    y = (int8_t) (state.origin_y - state.font_height - state.spacing_y);
-
-  } else if (i < 14) { // side filler for round
-    w = state.font_width;
-		h = state.font_height;
-
-    if (i % 2) {
-			x = state.origin_x + state.font_width + state.spacing_x + state.font_width + state.spacing_x;
-		} else {
-			x = (int8_t) (state.origin_x - state.font_width - state.spacing_x);
-		}
-
-		if (i < 12) {
-			y = state.origin_y;
-		} else {
-			y = state.origin_y + state.font_height + state.spacing_y;
-		}
-
-  } else if (i < 16) { // botom filler for round
-		w = state.font_width/2;
-		h = state.font_height/2;
-    x = state.origin_x + (state.font_width + state.spacing_x) * (i - 13) / 2; // 13 = 14-1 (skipping invisible slot outside circle)
-		y = state.origin_y + (state.font_height + state.spacing_y) * 2 + h + (h/6);
-
-  } else { // bottom side filler for round
-		w = state.font_width/2;
-		h = state.font_height/2;
-
-    if (i % 2) {
-      x = state.origin_x + state.font_width + state.spacing_x + state.font_width + state.spacing_x;
-    } else {
-      x = state.origin_x - w - state.spacing_x/2; // todo: find correct value
-    }
-
-		y = state.origin_y + (state.font_height + state.spacing_y) * 2;
-  }
-
-	return GRect(x, y, w, h);
-}
-
-static uint8_t fetch_rect(uint8_t digit, uint8_t x, uint8_t y, bool mirror) {
-  // character_map maps 0-9 (digits), 10-13 (ornaments), ascii codes of uppercase letters and 100-109 (progress) to characters[]
-  uint8_t color1 = characters[character_map[digit]][(y*2)]; // get one row of digit colors
-  uint8_t color2 = characters[character_map[digit]][(y*2)+1]; // get one row of ornament colors
-  uint8_t mask = 0b10000 >> x;
-
-  if (mirror) {
-    mask = 0b00001 << x;
-  }
-
-  if (color1 & mask) { // check column of row
-    return 1;
-  } else if (color2 & mask) {
-    return 2;
-  } else {
-    return 0;
-  }
-}
-
-static GColor8 get_slot_color(uint8_t x, uint8_t y, uint8_t digit, uint8_t pos, bool mirror) {
+static GColor8 get_slot_color(const uint8_t x, const uint8_t y, const uint8_t digit, const uint8_t pos, const bool mirror) {
   static uint8_t argb;
   static bool should_add_var = false;
   uint8_t thisrect = fetch_rect(digit, x, y, mirror);
@@ -202,63 +107,53 @@ static GColor8 get_slot_color(uint8_t x, uint8_t y, uint8_t digit, uint8_t pos, 
 }
 
 static void update_slot(Layer *layer, GContext *ctx) {
-	digitSlot *slot = *(digitSlot**)layer_get_data(layer);
+  digitSlot *slot = *(digitSlot**)layer_get_data(layer);
 
-  int widthadjust = 0;
+  int tilesize = 0;
 
-	if (slot->divider == 2) {
-		widthadjust = 1;
-	}
+  if (slot->sizeType == 1) {
+    tilesize = tile_size;
+  } else if (slot->sizeType == 2) {
+    tilesize = tile_size_small;
+  }
 
-	int tilesize = state.tile_size/slot->divider;
-	uint32_t skewedNormTime = slot->normTime*3;
+  uint32_t skewedNormTime = slot->normTime*3;
 
   graphics_context_set_fill_color(ctx, state.background_color);
-	GRect r = layer_get_bounds(slot->layer);
-	graphics_fill_rect(ctx, GRect(0, 0, r.size.w, r.size.h), 0, GCornerNone);
+  GRect r = layer_get_bounds(slot->layer);
+  graphics_fill_rect(ctx, GRect(0, 0, r.size.w, r.size.h), 0, GCornerNone);
 
-	for (int t=0; t < state.total_blocks; t++) {
-		int w = 0;
-		int tx = t % state.font_width_blocks;
-		int ty = t / state.font_height_blocks;
-		int shift = 0-(t-ty);
+  for (int t = 0; t < font_total_blocks; t++) {
+    int tx = t % font_width_blocks;
+    int ty = t / font_height_blocks;
+    int shift = 0 - (t - ty);
 
     GColor8 oldColor = get_slot_color(tx, ty, slot->prevDigit, slot->slotIndex, slot->mirror);
     GColor8 newColor = get_slot_color(tx, ty, slot->curDigit, slot->slotIndex, slot->mirror);
 
-	  graphics_context_set_fill_color(ctx, oldColor);
-    graphics_fill_rect(ctx, GRect((tx*tilesize)-(tx*widthadjust), ty*tilesize-(ty*widthadjust), tilesize-widthadjust, tilesize-widthadjust), 0, GCornerNone);
+    graphics_context_set_fill_color(ctx, oldColor);
+    graphics_fill_rect(ctx, GRect((tx*tilesize), ty*tilesize, tilesize, tilesize), 0, GCornerNone);
 
     if(!gcolor_equal(oldColor, newColor)) {
-      w = (skewedNormTime*state.tile_size/ANIMATION_NORMALIZED_MAX)+shift-widthadjust;
+      int w = (skewedNormTime*tile_size/ANIMATION_NORMALIZED_MAX)+shift;
 
-   		if (w < 0) {
-  			w = 0;
-  		} else if (w > tilesize-widthadjust) {
-  			w = tilesize-widthadjust;
-  		}
+      if (w < 0) {
+        w = 0;
+      } else if (w > tilesize) {
+        w = tilesize;
+      }
 
       graphics_context_set_fill_color(ctx, newColor);
-      graphics_fill_rect(ctx, GRect((tx*tilesize)-(tx*widthadjust), ty*tilesize-(ty*widthadjust), w, tilesize-widthadjust), 0, GCornerNone);
+      graphics_fill_rect(ctx, GRect((tx*tilesize), ty*tilesize, w, tilesize), 0, GCornerNone);
     }
-	}
-}
-
-static unsigned short get_display_hour(uint8_t hour) {
-    if (clock_is_24h_style()) {
-        return hour;
-    }
-
-    uint8_t display_hour = hour % 12;
-
-    return display_hour ? display_hour : 12;
+  }
 }
 
 static void setup_animation() {
   anim = animation_create();
-	animation_set_delay(anim, 0);
-	animation_set_duration(anim, state.contrastmode ? 500 : state.in_shake_mode ? state.animation_time/2 : state.animation_time);
-	animation_set_implementation(anim, &animImpl);
+  animation_set_delay(anim, 0);
+  animation_set_duration(anim, state.contrastmode ? 500 : state.in_shake_mode ? state.animation_time/2 : state.animation_time);
+  animation_set_implementation(anim, &animImpl);
   animation_set_curve(anim, AnimationCurveEaseInOut);
   #ifdef DEBUG
     APP_LOG(APP_LOG_LEVEL_INFO, "Set up anim %i", (int)anim);
@@ -344,7 +239,7 @@ static void set_heart_rate_slots(uint16_t number, bool isHeartrate, bool isBotto
   }
 }
 
-static void show_heart_rate(bool isBbottom) {
+static void show_heart_rate(const bool isBbottom) {
   #if defined(PBL_PLATFORM_EMERY) || defined(PBL_PLATFORM_DIORITE)
     HealthServiceAccessibilityMask hr = health_service_metric_accessible(HealthMetricHeartRateBPM, time(NULL), time(NULL));
     if (hr & HealthServiceAccessibilityMaskAvailable) {
@@ -618,7 +513,7 @@ static void set_progress_slots(uint16_t progress, bool bottom) {
 }
 #endif
 
-static void set_battery_slots(bool bottom){
+static void set_battery_slots(const bool bottom){
   static uint8_t digits[4];
   uint8_t progress = battery_state_service_peek().charge_percent;
 
@@ -733,8 +628,8 @@ static void set_big_date() {
   }
 }
 
-static void handle_tick(struct tm *t, TimeUnits units_changed) {
-	static uint8_t ho, mi, da, mo;
+static void handle_tick(struct tm *t, const TimeUnits units_changed) {
+  static uint8_t ho, mi, da, mo;
 
   if (state.splashEnded && !state.initial_anim) {
     if (animation_is_scheduled(anim)){
@@ -747,8 +642,8 @@ static void handle_tick(struct tm *t, TimeUnits units_changed) {
     da = t->tm_mday;
     mo = t->tm_mon+1;
 
-    #ifdef DEBUG
-      ho = 8+(mi%4);
+    #ifdef TEST_TICK
+    ho = 8+(mi%4);
     #endif
 
     uint8_t localeid = 0;
@@ -764,8 +659,8 @@ static void handle_tick(struct tm *t, TimeUnits units_changed) {
       }
 
       uint8_t weekdaynum = ((int)weekday_buffer[0])-0x30;
-      #ifdef DEBUG
-        weekdaynum = (int)mi%7;
+      #ifdef TEST_TICK
+      weekdaynum = (int)mi%7;
       #endif
       strcpy(weekdayname, weekdays[localeid][weekdaynum]);
     }
@@ -793,11 +688,11 @@ static void handle_tick(struct tm *t, TimeUnits units_changed) {
       }
     }
 
-    for (uint8_t i=0; i < state.num_slots; i++) {
+    for (uint8_t i=0; i < NUM_SLOTS; i++) {
       slot[i].prevDigit = slot[i].curDigit;
     }
 
-    for (int dig = 0; dig < state.num_slots; dig++) {
+    for (int dig = 0; dig < NUM_SLOTS; dig++) {
       if (slot[dig].prevDigit == 10 || slot[dig].prevDigit == 12) {
         slot[dig].curDigit = 11;
       } else {
@@ -876,7 +771,7 @@ void handle_timer(void *data) {
   state.splashEnded = true;
   time_t curTime = time(NULL);
   handle_tick(localtime(&curTime), MINUTE_UNIT|HOUR_UNIT|DAY_UNIT|MONTH_UNIT|YEAR_UNIT);
-	state.in_shake_mode = false;
+  state.in_shake_mode = false;
   state.initial_anim = true;
   app_timer_register(state.contrastmode ? 500 : state.in_shake_mode ? state.animation_time/2 : state.animation_time, initial_animation_done, NULL);
 }
@@ -885,7 +780,7 @@ static void tap_handler(AccelAxisType axis, int32_t direction) {
 
   if (prefs.wristflick != 0 && !state.in_shake_mode) {
 
-    for (uint8_t i=0; i<state.num_slots; i++) {
+    for (uint8_t i=0; i < NUM_SLOTS; i++) {
       slot[i].prevDigit = slot[i].curDigit;
     }
 
@@ -920,60 +815,65 @@ static void tap_handler(AccelAxisType axis, int32_t direction) {
   }
 }
 
-void init_slot(int i, Layer *parent) {
-	digitSlot *s = &slot[i];
+void init_slot(const int i, Layer *parent) {
+  // GCC warning
+  if (i >= NUM_SLOTS) {
+    return;
+  }
+
+  digitSlot *s = &slot[i];
 
   s->slotIndex = i;
-	s->normTime = ANIMATION_NORMALIZED_MAX;
-	s->prevDigit = startDigit[i];
-	s->curDigit = startDigit[i];
+  s->normTime = ANIMATION_NORMALIZED_MAX;
+  s->prevDigit = startDigit[i];
+  s->curDigit = startDigit[i];
 
-	if ((i<4 || i>=8) && i<14) {
-		s->divider = 1;
-	} else {
-		s->divider = 2;
-	}
+  if ((i < 4 || i >= 8) && i < 14) {
+    s->sizeType = 1; // Big
+  } else {
+    s->sizeType = 2; // Small
+  }
 
-  s->layer = layer_create_with_data(slot_frame(i), sizeof(digitSlot *));
-	*(digitSlot **)layer_get_data(s->layer) = s;
+  s->layer = layer_create_with_data(slot_frame(i, &state), sizeof(digitSlot *));
+  *(digitSlot **)layer_get_data(s->layer) = s;
 
-	layer_set_update_proc(s->layer, update_slot);
-	layer_add_child(parent, s->layer);
+  layer_set_update_proc(s->layer, update_slot);
+  layer_add_child(parent, s->layer);
 }
 
-static void deinit_slot(uint8_t i) {
-	layer_destroy(slot[i].layer);
+static void deinit_slot(const uint8_t i) {
+  layer_destroy(slot[i].layer);
 }
 
 static void animate_digits(struct Animation *anim, const AnimationProgress normTime) {
-	for (uint8_t i=0; i < state.num_slots; i++) {
-		if (slot[i].curDigit != slot[i].prevDigit) {
+  for (uint8_t i=0; i < NUM_SLOTS; i++) {
+    if (slot[i].curDigit != slot[i].prevDigit) {
       if (state.allow_animate) {
         slot[i].normTime = normTime;
       } else {
         slot[i].normTime = ANIMATION_NORMALIZED_MAX;
       }
 
-			layer_mark_dirty(slot[i].layer);
-		}
-	}
+      layer_mark_dirty(slot[i].layer);
+    }
+  }
 }
 
 static void setup_ui() {
   window_set_background_color(window, state.background_color);
-	window_stack_push(window, true);
+  window_stack_push(window, true);
 
-	Layer *rootLayer = window_get_root_layer(window);
+  Layer *rootLayer = window_get_root_layer(window);
 
-	for (uint8_t i=0; i < state.num_slots; i++) {
-		init_slot(i, rootLayer);
-	}
+  for (uint8_t i=0; i < NUM_SLOTS; i++) {
+    init_slot(i, rootLayer);
+  }
 
-	animImpl.setup = NULL;
-	animImpl.update = animate_digits;
-	animImpl.teardown = destroy_animation;
+  animImpl.setup = NULL;
+  animImpl.update = animate_digits;
+  animImpl.teardown = destroy_animation;
 
-	setup_animation();
+  setup_animation();
 
   // Choose animation start delay according to settings
   if (state.contrastmode) {
@@ -986,11 +886,11 @@ static void setup_ui() {
 }
 
 static void teardown_ui() {
-	for (uint8_t i=0; i < state.num_slots; i++) {
-		deinit_slot(i);
-	}
+  for (uint8_t i=0; i < NUM_SLOTS; i++) {
+    deinit_slot(i);
+  }
 
-	animation_destroy(anim);
+  animation_destroy(anim);
 }
 
 static void battery_handler(BatteryChargeState charge_state) {
@@ -1061,7 +961,7 @@ static void init() {
   app_message_register_inbox_dropped(in_dropped_handler);
   app_message_open(264,0);
 
-	tick_timer_service_subscribe(MINUTE_UNIT, handle_tick);
+  tick_timer_service_subscribe(MINUTE_UNIT, handle_tick);
 
   handle_bluetooth(connection_service_peek_pebble_app_connection());
 
@@ -1075,7 +975,7 @@ static void init() {
 }
 
 static void deinit() {
-	tick_timer_service_unsubscribe();
+  tick_timer_service_unsubscribe();
   connection_service_unsubscribe();
   battery_state_service_unsubscribe();
   accel_tap_service_unsubscribe();
@@ -1084,7 +984,7 @@ static void deinit() {
 }
 
 int main(void) {
-	init();
-	app_event_loop();
-	deinit();
+  init();
+  app_event_loop();
+  deinit();
 }

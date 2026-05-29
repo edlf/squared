@@ -34,35 +34,35 @@ void preferences_set_defaults(Preferences *preferences){
 }
 
 void preferences_load(DictionaryIterator *iter, Preferences *preferences) {
-  Tuple *eu_date_t = dict_find(iter, KEY_EU_DATE);
-  Tuple *quick_start_t = dict_find(iter, KEY_QUICK_START);
-  Tuple *leading_zero_t = dict_find(iter, KEY_LEADING_ZERO);
-  Tuple *background_color_t = dict_find(iter, KEY_BACKGROUND_COLOR);
-  Tuple *number_base_color_t = dict_find(iter, KEY_NUMBER_BASE_COLOR);
-  Tuple *number_variation_t = dict_find(iter, KEY_NUMBER_VARIATION);
-  Tuple *ornament_base_color_t = dict_find(iter, KEY_ORNAMENT_BASE_COLOR);
-  Tuple *ornament_variation_t = dict_find(iter, KEY_ORNAMENT_VARIATION);
-  Tuple *invert_t = dict_find(iter, KEY_INVERT);
-  Tuple *monochrome_t = dict_find(iter, KEY_MONOCHROME);
-  Tuple *center_t = dict_find(iter, KEY_CENTER);
-  Tuple *btvibe_t = dict_find(iter, KEY_BTVIBE);
-  Tuple *contrast_t = dict_find(iter, KEY_CONTRAST);
-  Tuple *nightsaver_t = dict_find(iter, KEY_NIGHTSAVER);
-  Tuple *ns_start_t = dict_find(iter, KEY_NS_START);
-  Tuple *ns_stop_t = dict_find(iter, KEY_NS_STOP);
-  Tuple *backlight_t = dict_find(iter, KEY_BACKLIGHT);
-  Tuple *weekday_t = dict_find(iter, KEY_WEEKDAY);
-  Tuple *bottomrow_t = dict_find(iter, KEY_BOTTOMROW);
-  Tuple *wristflick_t = dict_find(iter, KEY_WRISTFLICK);
-  Tuple *stepgoal_t = dict_find(iter, KEY_STEPGOAL);
-  Tuple *dynamicstepgoal_t = dict_find(iter, KEY_DYNAMICSTEPGOAL);
-  Tuple *cheeky_t = dict_find(iter, KEY_CHEEKY);
-  Tuple *battery_saver_t = dict_find(iter, KEY_BATTERY_SAVER);
+  Tuple *eu_date_t = dict_find(iter, MESSAGE_KEY_euDate);
+  Tuple *quick_start_t = dict_find(iter, MESSAGE_KEY_quickStart);
+  Tuple *leading_zero_t = dict_find(iter, MESSAGE_KEY_leadingZero);
+  Tuple *background_color_t = dict_find(iter, MESSAGE_KEY_backgroundColor);
+  Tuple *number_base_color_t = dict_find(iter, MESSAGE_KEY_numberBaseColor);
+  Tuple *number_variation_t = dict_find(iter, MESSAGE_KEY_numberVariation);
+  Tuple *ornament_base_color_t = dict_find(iter, MESSAGE_KEY_ornamentBaseColor);
+  Tuple *ornament_variation_t = dict_find(iter, MESSAGE_KEY_ornamentVariation);
+  Tuple *invert_t = dict_find(iter, MESSAGE_KEY_invert);
+  Tuple *monochrome_t = dict_find(iter, MESSAGE_KEY_monochrome);
+  Tuple *center_t = dict_find(iter, MESSAGE_KEY_center);
+  Tuple *btvibe_t = dict_find(iter, MESSAGE_KEY_btVibe);
+  Tuple *contrast_t = dict_find(iter, MESSAGE_KEY_contrast);
+  Tuple *nightsaver_t = dict_find(iter, MESSAGE_KEY_nightSaver);
+  Tuple *ns_start_t = dict_find(iter, MESSAGE_KEY_nsStart);
+  Tuple *ns_stop_t = dict_find(iter, MESSAGE_KEY_nsStop);
+  Tuple *backlight_t = dict_find(iter, MESSAGE_KEY_backlight);
+  Tuple *weekday_t = dict_find(iter, MESSAGE_KEY_weekday);
+  Tuple *bottomrow_t = dict_find(iter, MESSAGE_KEY_bottomRow);
+  Tuple *wristflick_t = dict_find(iter, MESSAGE_KEY_wristFlick);
+  Tuple *stepgoal_t = dict_find(iter, MESSAGE_KEY_stepGoal);
+  Tuple *dynamicstepgoal_t = dict_find(iter, MESSAGE_KEY_cheeky);
+  Tuple *cheeky_t = dict_find(iter, MESSAGE_KEY_dynamicStepGoal);
+  Tuple *battery_saver_t = dict_find(iter, MESSAGE_KEY_batterySaver);
   #ifdef PBL_COLOR
-  Tuple *use_presets_t = dict_find(iter, KEY_USE_PRESETS);
-  Tuple *background_preset_t = dict_find(iter, KEY_BACKGROUND_PRESET);
-  Tuple *number_preset_t = dict_find(iter, KEY_NUMBER_PRESET);
-  Tuple *ornament_preset_t = dict_find(iter, KEY_ORNAMENT_PRESET);
+  Tuple *use_presets_t = dict_find(iter, MESSAGE_KEY_usePresets);
+  Tuple *background_preset_t = dict_find(iter, MESSAGE_KEY_backgroundPreset);
+  Tuple *number_preset_t = dict_find(iter, MESSAGE_KEY_numbersPreset);
+  Tuple *ornament_preset_t = dict_find(iter, MESSAGE_KEY_ornamentsPreset);
   #endif
 
   if (eu_date_t) {             preferences->eu_date =                eu_date_t->value->int8; }

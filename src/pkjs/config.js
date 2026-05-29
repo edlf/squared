@@ -1,4 +1,5 @@
-module.exports = [{
+module.exports = [
+{
   "type": "heading",
   "id": "main-heading",
   "defaultValue": "Squared Config",
@@ -27,27 +28,27 @@ module.exports = [{
     "defaultValue": "COLORS"
   }, {
     "type": "color",
-    "messageKey": "background_color",
+    "messageKey": "backgroundColor",
     "defaultValue": "000000",
     "label": "Background Color"
   }, {
     "type": "color",
-    "messageKey": "number_base_color",
+    "messageKey": "numberBaseColor",
     "defaultValue": "55ffff",
     "label": "Numbers Base Color"
   }, {
     "type": "toggle",
-    "messageKey": "number_variation",
+    "messageKey": "numberVariation",
     "label": "Number Variation",
     "defaultValue": false
   }, {
     "type": "color",
-    "messageKey": "ornament_base_color",
+    "messageKey": "ornamentBaseColor",
     "defaultValue": "ff55ff",
     "label": "Ornaments Base Color"
   }, {
     "type": "toggle",
-    "messageKey": "ornament_variation",
+    "messageKey": "ornamentVariation",
     "label": "Ornament Variation",
     "defaultValue": false
   }],
@@ -62,12 +63,12 @@ module.exports = [{
     "defaultValue": "Overrides above color settings"
   }, {
     "type": "toggle",
-    "messageKey": "use_presets",
+    "messageKey": "usePresets",
     "label": "Use presets",
     "defaultValue": true
   }, {
     "type": "select",
-    "messageKey": "numbers_preset",
+    "messageKey": "numbersPreset",
     "label": "Numbers",
     "defaultValue": "1",
     "options": [{
@@ -133,7 +134,7 @@ module.exports = [{
     }]
   }, {
     "type": "select",
-    "messageKey": "ornaments_preset",
+    "messageKey": "ornamentsPreset",
     "label": "Ornaments",
     "defaultValue": "2",
     "options": [{
@@ -199,7 +200,7 @@ module.exports = [{
     }]
   }, {
     "type": "select",
-    "messageKey": "background_preset",
+    "messageKey": "backgroundPreset",
     "label": "Background",
     "defaultValue": "0",
     "options": [{
@@ -257,7 +258,7 @@ module.exports = [{
     "defaultValue": "APPEARANCE"
   }, {
     "type": "toggle",
-    "messageKey": "leading_zero",
+    "messageKey": "leadingZero",
     "label": "Leading Zeros",
     "defaultValue": false
   }]
@@ -268,7 +269,7 @@ module.exports = [{
     "defaultValue": "BOTTOM ROW"
   }, {
     "type": "select",
-    "messageKey": "bottomrow",
+    "messageKey": "bottomRow",
     "label": "Bottom Row Shows",
     "defaultValue": "0",
     "options": [{
@@ -294,7 +295,7 @@ module.exports = [{
     "defaultValue": "DATE"
   }, {
     "type": "toggle",
-    "messageKey": "eu_date",
+    "messageKey": "euDate",
     "label": "European Date (dd/mm)",
     "defaultValue": true
   }, {
@@ -315,7 +316,7 @@ module.exports = [{
     "defaultValue": "WRIST FLICK"
   }, {
     "type": "select",
-    "messageKey": "wristflick",
+    "messageKey": "wristFlick",
     "label": "Flick of the Wrist Shows",
     "defaultValue": "0",
     "options": [{
@@ -347,12 +348,12 @@ module.exports = [{
     "defaultValue": "Squared gets your steps from Pebble Health"
   }, {
     "type": "toggle",
-    "messageKey": "dynamicstepgoal",
+    "messageKey": "dynamicStepGoal",
     "label": "Dynamic Step Goal",
     "defaultValue": false
   }, {
     "type": "slider",
-    "messageKey": "stepgoal",
+    "messageKey": "stepGoal",
     "label": "Step Goal",
     "min": 1000,
     "max": 25000,
@@ -372,7 +373,7 @@ module.exports = [{
     "defaultValue": "ANIMATION"
   }, {
     "type": "toggle",
-    "messageKey": "quick_start",
+    "messageKey": "quickStart",
     "label": "Quick Animations",
     "defaultValue": true
   }]
@@ -383,17 +384,17 @@ module.exports = [{
     "defaultValue": "BATTERY SAVER"
   }, {
     "type": "toggle",
-    "messageKey": "battery_saver",
+    "messageKey": "batterySaver",
     "label": "Always on Battery Saver",
     "defaultValue": false
   }, {
     "type": "toggle",
-    "messageKey": "nightsaver",
+    "messageKey": "nightSaver",
     "label": "Scheduled Battery Saver",
     "defaultValue": true
   }, {
     "type": "select",
-    "messageKey": "ns_start",
+    "messageKey": "nsStart",
     "label": "Stop Animations at",
     "defaultValue": "4",
     "options": [{
@@ -435,7 +436,7 @@ module.exports = [{
     }]
   }, {
     "type": "select",
-    "messageKey": "ns_stop",
+    "messageKey": "nsStop",
     "label": "Continue Animations at",
     "defaultValue": "9",
     "options": [{
@@ -483,7 +484,7 @@ module.exports = [{
     "defaultValue": "ADVANCED"
   }, {
     "type": "toggle",
-    "messageKey": "btvibe",
+    "messageKey": "btVibe",
     "label": "Vibrate on Disconnect",
     "defaultValue": true
   }, {

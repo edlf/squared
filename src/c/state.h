@@ -70,7 +70,7 @@ typedef struct {
 } State;
 
 void state_init(State*);
-void state_update(State*, Preferences*);
+void state_update(State*, const Preferences* const);
 
 typedef struct {
   Layer            *layer;

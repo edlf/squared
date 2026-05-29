@@ -199,7 +199,7 @@ module.exports = [{
     }]
   }, {
     "type": "select",
-    "messageKey": "bg_preset",
+    "messageKey": "background_preset",
     "label": "Background",
     "defaultValue": "0",
     "options": [{

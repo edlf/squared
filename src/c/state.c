@@ -55,7 +55,7 @@ void state_init(State *state) {
   #endif
 }
 
-void state_update(State* state, Preferences* preferences) {
+void state_update(State* state, const Preferences* const preferences) {
   state->background_color = (GColor8) { .argb = preferences->background_color };
 
   #ifdef PBL_COLOR

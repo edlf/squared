@@ -40,7 +40,7 @@ typedef struct {
   #endif
 } Preferences;
 
-enum {
+enum : uint8_t {
   KEY_EU_DATE,
   KEY_QUICK_START,
   KEY_LEADING_ZERO,

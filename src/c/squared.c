@@ -926,6 +926,7 @@ static void in_received_handler(DictionaryIterator *iter, void *context) {
     light_enable(battery_state_service_peek().is_plugged);
   }
 
+  // Reload UI
   teardown_ui();
   setup_ui();
 }

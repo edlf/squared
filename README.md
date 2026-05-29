@@ -17,3 +17,4 @@ A Pebble Watchface for Pebble, Pebble Time and Pebble Time Round
 ## TODO
  * Fix redraw on return from menu
  * Remove as much of math possible from clock/steps display events
+ * Figure out if the config page can be wrapped inside the pbw. Original config page by lastfuture has been archived

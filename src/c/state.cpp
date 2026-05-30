@@ -94,11 +94,7 @@ void setStepGoal(const HealthValue stepgoal) {
 }
 
 void updateStepProgress(const HealthValue stepcount) {
-  uint16_t sp = (((float)stepcount/(float)state_struct.stepgoal)*100);
-  if (sp > 100) {
-    sp = 100;
-  }
-  state_struct.stepprogress = sp;
+  state_struct.stepprogress = (((float)stepcount/(float)state_struct.stepgoal)*100);
 }
 
 #endif

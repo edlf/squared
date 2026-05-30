@@ -24,7 +24,7 @@ typedef struct {
 
   #ifdef PBL_HEALTH
   HealthValue stepgoal;
-  uint8_t stepprogress;
+  uint16_t stepprogress;
   HealthValue heartrate;
   #endif
 } state_t;

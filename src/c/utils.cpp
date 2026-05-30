@@ -1,5 +1,5 @@
-#include <pebble.h>
-#include "utils.h"
+#include "pebble.hpp"
+#include "utils.hpp"
 
 uint8_t get_GColor8FromInt32(const int32_t color) {
   const uint8_t a = 192;

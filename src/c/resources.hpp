@@ -1,18 +1,20 @@
-#include "resources.h"
+#ifndef RESOURCES_H
+#define RESOURCES_H
 
-const char * locales[6] = {"en", "de", "es", "fr", "it", "pt"};
+#include "pebble.h"
 
-const char * weekdays[6][7] =  {
-{ "SU","MO","TU","WE","TH","FR","SA" }, // EN
-{ "SO","MO","DI","MI","DO","FR","SA" }, // DE
-{ "DO","LU","MA","MI","JU","VI","SA" }, // ES - from https://forums.getpebble.com/discussion/comment/166975/#Comment_166975
-{ "DI","LU","MA","ME","JE","VE","SA" }, // FR - from https://www.quora.com/How-are-days-of-the-week-abbreviated-in-various-languages
-{ "DO","LU","MA","ME","GI","VE","SA" }, // IT - from https://www.quora.com/How-are-days-of-the-week-abbreviated-in-various-languages
-{ "DO","SG","TE","QA","QI","SX","SA" }  // PT - from http://www.brazil-help.com/week.htm (is this correct?)
+constexpr char locales[6][3] = {"en", "de", "es", "fr", "it", "pt"};
+constexpr char weekdays[6][7][3] =  {
+  { "SU","MO","TU","WE","TH","FR","SA" }, // EN
+  { "SO","MO","DI","MI","DO","FR","SA" }, // DE
+  { "DO","LU","MA","MI","JU","VI","SA" }, // ES
+  { "DI","LU","MA","ME","JE","VE","SA" }, // FR
+  { "DO","LU","MA","ME","GI","VE","SA" }, // IT
+  { "DO","SG","TE","QA","QI","SX","SA" }  // PT
 }; // required Letters: ADEFGHIJLMOQRSTUVWX
 
 // character_map[] maps 0-9 (digits), 10-13 (ornaments), ascii codes of uppercase letters and 100-109 (progress indicators) to characters[]
-const uint8_t character_map[122] = {
+constexpr uint8_t character_map[122] = {
 // DIGITS
 [0] = 0,
 [1] = 1,
@@ -34,10 +36,53 @@ const uint8_t character_map[122] = {
 [15] = 15,
 [16] = 16,
 [17] = 13, // same as 13
+[18] = 0,
+[19] = 0,
+[20] = 0,
+[21] = 0,
+[22] = 0,
+[23] = 0,
+[24] = 0,
+[25] = 0,
+[26] = 0,
+[27] = 0,
+[28] = 0,
+[29] = 0,
+[30] = 0,
+[31] = 0,
+[32] = 0,
+[33] = 0,
+[34] = 0,
+[35] = 0,
+[36] = 0,
 [37] = 17, // %
+[38] = 0,
+[39] = 0,
+[40] = 0,
+[41] = 0,
 [42] = 18, // *
+[43] = 0,
+[44] = 0,
 [45] = 62, // -
+[46] = 0,
 [47] = 61, // slash
+[48] = 0,
+[49] = 0,
+[50] = 0,
+[51] = 0,
+[52] = 0,
+[53] = 0,
+[54] = 0,
+[55] = 0,
+[56] = 0,
+[57] = 0,
+[58] = 0,
+[59] = 0,
+[60] = 0,
+[61] = 0,
+[62] = 0,
+[63] = 0,
+[64] = 0,
 // UPPERCASE ASCII CHARACTERS
 [65] = 19,
 [66] = 20,
@@ -65,6 +110,15 @@ const uint8_t character_map[122] = {
 [88] = 41,
 [89] = 42,
 [90] = 43,
+[91] = 0,
+[92] = 0,
+[93] = 0,
+[94] = 0,
+[95] = 0,
+[96] = 0,
+[97] = 0,
+[98] = 0,
+[99] = 0,
 // PROGRESS
 [100] = 10, // same as ornament 10
 [101] = 44,
@@ -92,7 +146,7 @@ const uint8_t character_map[122] = {
 };
 
 // left column is digit color, right column is ornament color
-const uint8_t characters[64][10] =  {
+constexpr uint8_t characters[64][10] =  {
 // DIGITS
 {
   0b11111, 0b00000,
@@ -557,15 +611,15 @@ const uint8_t characters[64][10] =  {
 }
 };
 
-const uint8_t progress_top_seq[19] = {
+constexpr uint8_t progress_top_seq[19] = {
   0, 10, 20, 30, 31, 32, 33, 43, 53, 63, 64, 65, 66, 76, 86, 96, 97, 98, 99
 };
 
-const uint8_t startDigit[18] = {
+constexpr uint8_t startDigit[18] = {
   11,12,12,11,11,12,10,13,12,11,12,11,11,12,10,13,12,10 // 2x h, 2x m, 4x date, 2x filler top, 4x filler sides, 2x filler bottom, 2x filler bottom sides
 };
 
-const uint8_t variation[100] = {
+constexpr uint8_t variation[100] = {
   0b00000000, 0b00010000, 0b00000100, 0b00010000, 0b00000000,
   0b00010001, 0b00010000, 0b00000000, 0b00000101, 0b00010000,
   0b00000001, 0b00000000, 0b00000000, 0b00010100, 0b00010001,
@@ -588,7 +642,7 @@ const uint8_t variation[100] = {
   0b00000000, 0b00000001, 0b00010001, 0b00000101, 0b00010100
 };
 
-const uint8_t shadowtable[256] = {
+constexpr uint8_t shadowtable[256] = {
   192,192,192,192,192,192,192,192,192,192,192,192,192,192,192,192,
   192,192,192,192,192,192,192,192,192,192,192,192,192,192,192,192,
   192,192,192,192,192,192,192,192,192,192,192,192,192,192,192,192,
@@ -608,10 +662,13 @@ const uint8_t shadowtable[256] = {
 };
 
 // alpha should only be 0b??111111 where ?? = 00 (full shade), 01 (much shade), 10 (some shade), 11 (none shade)
-const uint8_t alpha = 0b10111111;
+constexpr uint8_t alpha = 0b10111111;
 
 #ifdef PBL_COLOR
-const uint8_t background_color_presets[NUMBER_OF_BG_PRESETS] = {
+constexpr uint8_t NUMBER_OF_BG_PRESETS = 15;
+constexpr uint8_t NUMBER_OF_CHAR_PRESETS = 20;
+
+constexpr uint8_t background_color_presets[NUMBER_OF_BG_PRESETS] = {
   GColorBlackARGB8,
   GColorWhiteARGB8,
   GColorArmyGreenARGB8,
@@ -629,7 +686,7 @@ const uint8_t background_color_presets[NUMBER_OF_BG_PRESETS] = {
   GColorMediumSpringGreenARGB8
 };
 
-const uint8_t character_base_color_presets[NUMBER_OF_CHAR_PRESETS] = {
+constexpr uint8_t character_base_color_presets[NUMBER_OF_CHAR_PRESETS] = {
   GColorWhiteARGB8,
   GColorTiffanyBlueARGB8,
   GColorPurpleARGB8,
@@ -652,7 +709,7 @@ const uint8_t character_base_color_presets[NUMBER_OF_CHAR_PRESETS] = {
   GColorLightGrayARGB8
 };
 
-const bool character_variation_presets[NUMBER_OF_CHAR_PRESETS] = {
+constexpr bool character_variation_presets[NUMBER_OF_CHAR_PRESETS] = {
   false,
   true,
   true,
@@ -674,24 +731,8 @@ const bool character_variation_presets[NUMBER_OF_CHAR_PRESETS] = {
   false,
   false
 };
-
 #endif
 
-uint8_t fetch_rect(const uint8_t digit, const uint8_t x, const uint8_t y, const bool mirror) {
-  // character_map maps 0-9 (digits), 10-13 (ornaments), ascii codes of uppercase letters and 100-109 (progress) to characters[]
-  uint8_t color1 = characters[character_map[digit]][(y*2)]; // get one row of digit colors
-  uint8_t color2 = characters[character_map[digit]][(y*2)+1]; // get one row of ornament colors
-  uint8_t mask = 0b10000 >> x;
+uint8_t fetch_rect(const uint8_t digit, const uint8_t x, const uint8_t y, const bool mirror);
 
-  if (mirror) {
-    mask = 0b00001 << x;
-  }
-
-  if (color1 & mask) { // check column of row
-    return 1;
-  } else if (color2 & mask) {
-    return 2;
-  } else {
-    return 0;
-  }
-}
+#endif

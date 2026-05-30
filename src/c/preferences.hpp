@@ -1,9 +1,9 @@
 #ifndef PREFERENCES_H
 #define PREFERENCES_H
 
-#include <pebble.h>
-#include "utils.h"
-#include "resources.h"
+#include "pebble.h"
+#include "utils.hpp"
+#include "resources.hpp"
 
 #define PREFERENCES_KEY 0
 
@@ -40,7 +40,18 @@ typedef struct {
   #endif
 } Preferences;
 
-void preferences_set_defaults(Preferences*);
-void preferences_load(DictionaryIterator*, Preferences*);
+// Loads preferences from storage or inits defaults if those dont exist
+void preferences_load();
+
+// Writes settings received from app + persists them
+void preferences_write(const DictionaryIterator*);
+
+const Preferences* get_preferences();
+
+bool preferences_backlight();
+bool preferences_bt_vibe();
+bool preferences_cheeky();
+bool preferences_contrast();
+uint32_t preferences_animation_time();
 
 #endif /* end of include guard: PREFERENCES_H */

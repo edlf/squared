@@ -1,7 +1,7 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#include <pebble.h>
+#include "pebble.h"
 
 uint8_t get_GColor8FromInt32(const int32_t color);
 

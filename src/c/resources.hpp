@@ -1,5 +1,5 @@
-#ifndef RESOURCES_H
-#define RESOURCES_H
+#ifndef RESOURCES_HPP
+#define RESOURCES_HPP
 
 #include "pebble.h"
 
@@ -731,8 +731,8 @@ constexpr bool character_variation_presets[NUMBER_OF_CHAR_PRESETS] = {
   false,
   false
 };
-#endif
+#endif // PBL_COLOR
 
 uint8_t fetch_rect(const uint8_t digit, const uint8_t x, const uint8_t y, const bool mirror);
 
-#endif
+#endif // RESOURCES_HPP

@@ -1,6 +1,8 @@
 #include "squared_slots.hpp"
 
-static GRect slot_frame_main_digits(const int8_t i) {
+namespace slots {
+
+static GRect frame_main_digits(const int8_t i) {
   int16_t x, y;
 
   if (i % 2) {
@@ -18,7 +20,7 @@ static GRect slot_frame_main_digits(const int8_t i) {
   return GRect(x, y, constants::font_size.w, constants::font_size.h);
 }
 
-static GRect slot_frame_date_digits(const int8_t i) {
+static GRect frame_date_digits(const int8_t i) {
   const int16_t digit = i - 4;
   int16_t x, y;
 
@@ -33,7 +35,7 @@ static GRect slot_frame_date_digits(const int8_t i) {
   return GRect(x, y, constants::font_small_size.w, constants::font_small_size.h);
 }
 
-static GRect slot_frame_round_top_filler(const int8_t i) {
+static GRect frame_round_top_filler(const int8_t i) {
   int16_t x, y;
   if (i % 2) {
     x = constants::origin.w + constants::font_size.w + constants::spacing.w; // i = 1 or 3
@@ -46,7 +48,7 @@ static GRect slot_frame_round_top_filler(const int8_t i) {
   return GRect(x, y, constants::font_size.w, constants::font_size.h);
 }
 
-static GRect slot_frame_round_side_filler(const int8_t i) {
+static GRect frame_round_side_filler(const int8_t i) {
   int16_t x, y;
 
   if (i % 2) {
@@ -64,7 +66,7 @@ static GRect slot_frame_round_side_filler(const int8_t i) {
   return GRect(x, y, constants::font_size.w, constants::font_size.h);
 }
 
-static GRect slot_frame_round_bottom_filler(const int8_t i) {
+static GRect frame_round_bottom_filler(const int8_t i) {
   int16_t x, y, h;
   h = constants::font_small_size.h;
   x = constants::origin.w + (constants::font_size.w + constants::spacing.w) * (i - 13) / 2; // 13 = 14-1 (skipping invisible slot outside circle)
@@ -72,7 +74,7 @@ static GRect slot_frame_round_bottom_filler(const int8_t i) {
   return GRect(x, y, constants::font_small_size.w, h);
 }
 
-static GRect slot_frame_round_bottom_side_filler(const int8_t i) {
+static GRect frame_round_bottom_side_filler(const int8_t i) {
   int16_t x, y;
 
   if (i % 2) {
@@ -85,18 +87,20 @@ static GRect slot_frame_round_bottom_side_filler(const int8_t i) {
   return GRect(x, y, constants::font_small_size.w, constants::font_small_size.h);
 }
 
-GRect slot_frame(const int8_t slot_no) {
+GRect frame(const int8_t slot_no) {
   if (slot_no < 4) { // main digits
-    return slot_frame_main_digits(slot_no);
+    return frame_main_digits(slot_no);
   } else if (slot_no < 8) { // date digits
-    return slot_frame_date_digits(slot_no);
+    return frame_date_digits(slot_no);
   } else if (slot_no < 10) { // top filler for round
-    return slot_frame_round_top_filler(slot_no);
+    return frame_round_top_filler(slot_no);
   } else if (slot_no < 14) { // side filler for round
-    return slot_frame_round_side_filler(slot_no);
+    return frame_round_side_filler(slot_no);
   } else if (slot_no < 16) { // bottom filler for round
-    return slot_frame_round_bottom_filler(slot_no);
+    return frame_round_bottom_filler(slot_no);
   } else { // bottom side filler for round
-    return slot_frame_round_bottom_side_filler(slot_no);
+    return frame_round_bottom_side_filler(slot_no);
   }
 }
+
+} //namespace slots

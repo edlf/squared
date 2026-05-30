@@ -15,11 +15,10 @@
 
 Window *window;
 
-digitSlot slot[constants::num_slots];
+slots::digit slot[constants::num_slots];
 static char weekday_buffer[2];
 AnimationImplementation animImpl;
 Animation *anim;
-static state::state_t state_struct;
 
 static void handle_bluetooth(const bool connected) {
   if (!quiet_time_is_active() && preferences_bt_vibe() && !connected) {
@@ -42,20 +41,20 @@ static GColor8 get_slot_color(const uint8_t x, const uint8_t y, const uint8_t di
 
   if (thisrect == 0) {
 
-    if (state_struct.contrastmode) {
+    if (state::get().contrastmode) {
       return GColorBlack;
     }
 
-    return state_struct.background_color;
+    return state::get().background_color;
 
   } else if (thisrect == 1) {
 
     #if defined(PBL_COLOR)
-      if (state_struct.contrastmode && pos >= 8) {
+      if (state::get().contrastmode && pos >= 8) {
         argb = 0b11000000;
       } else {
-        argb = state_struct.contrastmode ? 0b11111111 : prefs->number_base_color;
-        should_add_var = state_struct.contrastmode ? false : prefs->number_variation;
+        argb = state::get().contrastmode ? 0b11111111 : prefs->number_base_color;
+        should_add_var = state::get().contrastmode ? false : prefs->number_variation;
       }
     #elif defined(PBL_BW)
       if (prefs->invert) {
@@ -66,8 +65,8 @@ static GColor8 get_slot_color(const uint8_t x, const uint8_t y, const uint8_t di
     #endif
   } else {
     #if defined(PBL_COLOR)
-      argb = state_struct.contrastmode ? 0b11000001 : prefs->ornament_base_color;
-      should_add_var = state_struct.contrastmode ? false : prefs->ornament_variation;
+      argb = state::get().contrastmode ? 0b11000001 : prefs->ornament_base_color;
+      should_add_var = state::get().contrastmode ? false : prefs->ornament_variation;
     #elif defined(PBL_BW)
       if (prefs->monochrome) {
         argb = 0b11010101;
@@ -92,7 +91,7 @@ static GColor8 get_slot_color(const uint8_t x, const uint8_t y, const uint8_t di
   if (pos >= 8) {
     uint8_t argb_temp = shadowtable[alpha & argb];
 
-    if (argb_temp == state_struct.background_color.argb) {
+    if (argb_temp == state::get().background_color.argb) {
       argb_temp = argb;
     }
 
@@ -104,7 +103,7 @@ static GColor8 get_slot_color(const uint8_t x, const uint8_t y, const uint8_t di
 }
 
 static void update_slot(Layer *layer, GContext *ctx) {
-  digitSlot *slot = *(digitSlot**)layer_get_data(layer);
+  slots::digit *slot = *(slots::digit**)layer_get_data(layer);
 
   int16_t tilesize = 0;
 
@@ -116,7 +115,7 @@ static void update_slot(Layer *layer, GContext *ctx) {
 
   uint32_t skewedNormTime = slot->normTime*3;
 
-  graphics_context_set_fill_color(ctx, state_struct.background_color);
+  graphics_context_set_fill_color(ctx, state::get().background_color);
   GRect r = layer_get_bounds(slot->layer);
   graphics_fill_rect(ctx, GRect(0, 0, r.size.w, r.size.h), 0, GCornerNone);
 
@@ -151,7 +150,7 @@ static void update_slot(Layer *layer, GContext *ctx) {
 static void setup_animation() {
   anim = animation_create();
   animation_set_delay(anim, 0);
-  animation_set_duration(anim, state_struct.contrastmode ? 500 : state_struct.in_shake_mode ? state_struct.animation_time/2 : state_struct.animation_time);
+  animation_set_duration(anim, state::get().contrastmode ? 500 : state::get().in_shake_mode ? state::get().animation_time/2 : state::get().animation_time);
   animation_set_implementation(anim, &animImpl);
   animation_set_curve(anim, AnimationCurveEaseInOut);
   #ifdef DEBUG
@@ -242,12 +241,12 @@ static void show_heart_rate(const bool isBbottom) {
   #if defined(PBL_PLATFORM_EMERY) || defined(PBL_PLATFORM_DIORITE)
     HealthServiceAccessibilityMask hr = health_service_metric_accessible(HealthMetricHeartRateBPM, time(NULL), time(NULL));
     if (hr & HealthServiceAccessibilityMaskAvailable) {
-      state_struct.heartrate = (int)health_service_peek_current_value(HealthMetricHeartRateBPM);
+      state::setHeartRate(health_service_peek_current_value(HealthMetricHeartRateBPM));
     }
   #endif
 
-  if (state_struct.heartrate > 0) {
-    set_heart_rate_slots(state_struct.heartrate, true, isBbottom);
+  if (state::get().heartrate > 0) {
+    set_heart_rate_slots(state::get().heartrate, true, isBbottom);
   } else {
     set_heart_rate_slots(0, true, isBbottom);
   }
@@ -266,15 +265,15 @@ static void update_step_goal() {
   HealthServiceAccessibilityMask mask_average = health_service_metric_averaged_accessible(metric_stepcount, start, end, scope);
 
   if (prefs->dynamicstepgoal && (mask_average & HealthServiceAccessibilityMaskAvailable)) {
-    state_struct.stepgoal = (uint16_t)health_service_sum_averaged(metric_stepcount, start, end, scope);
+    state::setStepGoal(health_service_sum_averaged(metric_stepcount, start, end, scope));
   } else {
-    state_struct.stepgoal = prefs->stepgoal;
+    state::setStepGoal(prefs->stepgoal);
   }
 
   if(mask_steps & HealthServiceAccessibilityMaskAvailable) {
     // Data is available!
-    uint16_t stepcount = health_service_sum_today(metric_stepcount);
-    state_struct.stepprogress = (uint16_t)(((float)stepcount/(float)state_struct.stepgoal)*100);
+    HealthValue stepcount = health_service_sum_today(metric_stepcount);
+    state::updateStepProgress(stepcount);
     #ifdef DEBUG
       APP_LOG(APP_LOG_LEVEL_INFO, "Stepcount: %d / Stepgoal: %d", stepcount, stepgoal);
       APP_LOG(APP_LOG_LEVEL_INFO, "Step progress: %d%%", stepprogress);
@@ -634,7 +633,7 @@ static void handle_tick(struct tm *t, const TimeUnits units_changed) {
 
   static uint8_t ho, mi, da, mo;
 
-  if (state_struct.splashEnded && !state_struct.initial_anim) {
+  if (state::get().splashEnded && !state::get().initial_anim) {
     if (animation_is_scheduled(anim)){
       animation_unschedule(anim);
       animation_destroy(anim);
@@ -669,7 +668,7 @@ static void handle_tick(struct tm *t, const TimeUnits units_changed) {
     }
 
     if (prefs->battery_saver || prefs->ns_start == prefs->ns_stop) {
-      state_struct.allow_animate = false;
+      state::setAllowAnimate(false);
 
     } else {
 
@@ -677,17 +676,17 @@ static void handle_tick(struct tm *t, const TimeUnits units_changed) {
         if (prefs->ns_start > prefs->ns_stop) {
           // across midnight
           if (t->tm_hour >= prefs->ns_start || t->tm_hour < prefs->ns_stop) {
-            state_struct.allow_animate = false;
+            state::setAllowAnimate(false);
           }
         } else {
           // prior to midnight
           if (t->tm_hour >= prefs->ns_start && t->tm_hour < prefs->ns_stop) {
-            state_struct.allow_animate = false;
+            state::setAllowAnimate(false);
           }
         }
 
       } else {
-        state_struct.allow_animate = true;
+        state::setAllowAnimate(true);
       }
     }
 
@@ -719,7 +718,7 @@ static void handle_tick(struct tm *t, const TimeUnits units_changed) {
       #ifdef PBL_HEALTH
       case 2:
         update_step_goal();
-        set_progress_slots(state_struct.stepprogress, true);
+        set_progress_slots(state::get().stepprogress, true);
         break;
 
       case 3:
@@ -767,23 +766,23 @@ static void handle_tick(struct tm *t, const TimeUnits units_changed) {
 }
 
 static void initial_animation_done(void*) {
-  state_struct.initial_anim = false;
+  state::setInitialAnim(false);
 }
 
 void handle_timer(void *data) {
   static const TimeUnits tu = static_cast<TimeUnits>(MINUTE_UNIT|HOUR_UNIT|DAY_UNIT|MONTH_UNIT|YEAR_UNIT);
-  state_struct.splashEnded = true;
+  state::setSplashEnded(true);
   time_t curTime = time(NULL);
   handle_tick(localtime(&curTime), tu);
-  state_struct.in_shake_mode = false;
-  state_struct.initial_anim = true;
-  app_timer_register(state_struct.contrastmode ? 500 : state_struct.in_shake_mode ? state_struct.animation_time/2 : state_struct.animation_time, initial_animation_done, NULL);
+  state::setInShakeMode(false);
+  state::setInitialAnim(true);
+  app_timer_register(state::get().contrastmode ? 500 : state::get().in_shake_mode ? state::get().animation_time/2 : state::get().animation_time, initial_animation_done, NULL);
 }
 
 static void tap_handler(AccelAxisType axis, int32_t direction) {
   const Preferences* const prefs = get_preferences();
 
-  if (prefs->wristflick != 0 && !state_struct.in_shake_mode) {
+  if (prefs->wristflick != 0 && !state::get().in_shake_mode) {
 
     for (uint8_t i=0; i < constants::num_slots; i++) {
       slot[i].prevDigit = slot[i].curDigit;
@@ -797,7 +796,7 @@ static void tap_handler(AccelAxisType axis, int32_t direction) {
       #ifdef PBL_HEALTH
       case 2:
         update_step_goal();
-        set_progress_slots(state_struct.stepprogress, false);
+        set_progress_slots(state::get().stepprogress, false);
         break;
 
       case 3:
@@ -813,7 +812,7 @@ static void tap_handler(AccelAxisType axis, int32_t direction) {
         break;
     }
 
-    state_struct.in_shake_mode = true;
+    state::setInShakeMode(true);
     setup_animation();
     animation_schedule(anim);
     app_timer_register(3000, handle_timer, NULL);
@@ -821,12 +820,7 @@ static void tap_handler(AccelAxisType axis, int32_t direction) {
 }
 
 void init_slot(const int i, Layer *parent) {
-  // GCC warning
-  if (i >= constants::num_slots) {
-    return;
-  }
-
-  digitSlot *s = &slot[i];
+  slots::digit *s = &slot[i];
 
   s->slotIndex = i;
   s->normTime = ANIMATION_NORMALIZED_MAX;
@@ -839,8 +833,8 @@ void init_slot(const int i, Layer *parent) {
     s->sizeType = 2; // Small
   }
 
-  s->layer = layer_create_with_data(slot_frame(i), sizeof(digitSlot *));
-  *(digitSlot **)layer_get_data(s->layer) = s;
+  s->layer = layer_create_with_data(slots::frame(i), sizeof(slots::digit *));
+  *(slots::digit **)layer_get_data(s->layer) = s;
 
   layer_set_update_proc(s->layer, update_slot);
   layer_add_child(parent, s->layer);
@@ -853,7 +847,7 @@ static void deinit_slot(const uint8_t i) {
 static void animate_digits(struct Animation *anim, const AnimationProgress normTime) {
   for (uint8_t i=0; i < constants::num_slots; i++) {
     if (slot[i].curDigit != slot[i].prevDigit) {
-      if (state_struct.allow_animate) {
+      if (state::get().allow_animate) {
         slot[i].normTime = normTime;
       } else {
         slot[i].normTime = ANIMATION_NORMALIZED_MAX;
@@ -865,7 +859,7 @@ static void animate_digits(struct Animation *anim, const AnimationProgress normT
 }
 
 static void setup_ui() {
-  window_set_background_color(window, state_struct.background_color);
+  window_set_background_color(window, state::get().background_color);
   window_stack_push(window, true);
 
   Layer *rootLayer = window_get_root_layer(window);
@@ -881,7 +875,7 @@ static void setup_ui() {
   setup_animation();
 
   // Choose animation start delay according to settings
-  if (state_struct.contrastmode) {
+  if (state::get().contrastmode) {
     app_timer_register(0, handle_timer, NULL);
   } else {
     app_timer_register(preferences_animation_time(), handle_timer, NULL);
@@ -899,12 +893,12 @@ static void teardown_ui() {
 static void battery_handler(BatteryChargeState charge_state) {
   #ifdef PBL_COLOR
   if (preferences_contrast()) {
-    if (state_struct.previous_contrastmode != charge_state.is_plugged) {
-      window_set_background_color(window, state_struct.background_color);
+    if (state::get().previous_contrastmode != charge_state.is_plugged) {
+      window_set_background_color(window, state::get().background_color);
       app_timer_register(0, handle_timer, NULL);
     }
 
-    state_struct.previous_contrastmode = charge_state.is_plugged;
+    state::setPreviousContrastMode(charge_state.is_plugged);
   }
   #endif
 
@@ -912,17 +906,17 @@ static void battery_handler(BatteryChargeState charge_state) {
     light_enable(charge_state.is_plugged);
   }
 
-  if (state_struct.chargestate != charge_state.is_plugged) {
-    window_set_background_color(window, state_struct.background_color);
+  if (state::get().chargestate != charge_state.is_plugged) {
+    window_set_background_color(window, state::get().background_color);
     app_timer_register(0, handle_timer, NULL);
   }
 
-  state_struct.chargestate = charge_state.is_plugged;
+  state::setChargeState(charge_state.is_plugged);
 }
 
 static void in_received_handler(DictionaryIterator *iter, void *context) {
   preferences_write(iter);
-  state::update(&state_struct);
+  state::update();
 
   if (preferences_backlight()) {
     light_enable(battery_state_service_peek().is_plugged);
@@ -940,12 +934,12 @@ static void in_dropped_handler(AppMessageResult reason, void *context) {
 }
 
 static void init() {
-  state::init(&state_struct);
+  state::init();
   window = window_create();
 
   preferences_load();
 
-  state::update(&state_struct);
+  state::update();
 
   setup_ui();
 

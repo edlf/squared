@@ -23,24 +23,31 @@ typedef struct {
   #endif
 
   #ifdef PBL_HEALTH
-  uint16_t stepgoal;
-  uint16_t stepprogress;
-  uint8_t heartrate;
+  HealthValue stepgoal;
+  uint8_t stepprogress;
+  HealthValue heartrate;
   #endif
 } state_t;
 
-void init(state_t*);
-void update(state_t*);
-} // namespace state
+void init(void);
+void update(void);
 
-typedef struct {
-  Layer            *layer;
-  bool              mirror;
-  uint8_t           prevDigit;
-  uint8_t           curDigit;
-  uint8_t           sizeType;
-  AnimationProgress normTime;
-  uint8_t           slotIndex;
-} digitSlot;
+void setAllowAnimate(const bool);
+void setInitialAnim(const bool);
+void setSplashEnded(const bool);
+void setInShakeMode(const bool);
+void setChargeState(const bool);
+#ifdef PBL_COLOR
+void setPreviousContrastMode(const bool);
+#endif
+
+const state_t& get(void);
+
+#ifdef PBL_HEALTH
+void setHeartRate(const HealthValue);
+void setStepGoal(const HealthValue);
+void updateStepProgress(const HealthValue);
+#endif
+} // namespace state
 
 #endif

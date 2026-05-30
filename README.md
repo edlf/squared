@@ -10,6 +10,7 @@ A Pebble Watchface for Pebble, Pebble Time and Pebble Time Round
  * Use clay instead of hosted config page by edlf (offline config)
  * Ported to Pebble Time 2, might introduce regressions on round watches
  * Big font mode removed
+ * Somewhat in C++
 
 ## Notes
  * Clay configuration page does not hide elements that are ignored if others are enabled. This is purely cosmetic though.

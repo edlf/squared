@@ -2,6 +2,7 @@
 #define RESOURCES_HPP
 
 #include "pebble.h"
+#include "constants.hpp"
 
 constexpr char locales[6][3] = {"en", "de", "es", "fr", "it", "pt"};
 constexpr char weekdays[6][7][3] =  {
@@ -615,8 +616,12 @@ constexpr uint8_t progress_top_seq[19] = {
   0, 10, 20, 30, 31, 32, 33, 43, 53, 63, 64, 65, 66, 76, 86, 96, 97, 98, 99
 };
 
-constexpr uint8_t startDigit[18] = {
-  11,12,12,11,11,12,10,13,12,11,12,11,11,12,10,13,12,10 // 2x h, 2x m, 4x date, 2x filler top, 4x filler sides, 2x filler bottom, 2x filler bottom sides
+constexpr uint8_t startDigit[constants::num_slots] = {
+#ifdef PBL_ROUND
+  11,12,12,11,12,11,12,11,11,12,10,13 // 2x h, 2x m, 2x filler top, 4x filler sides, 2x filler bottom
+#else
+  11,12,12,11,11,12,10,13 // 2x h, 2x m, 4x date
+#endif
 };
 
 constexpr uint8_t variation[100] = {

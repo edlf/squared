@@ -216,6 +216,7 @@ static void set_heart_rate_slots(uint16_t number, bool isHeartrate, bool isBotto
     slot[digits[3]].curDigit = units;
   }
 
+  #ifndef PBL_ROUND
   if (!isBottom) {
     slot[4].curDigit = 121;
     slot[5].curDigit = 101;
@@ -235,6 +236,7 @@ static void set_heart_rate_slots(uint16_t number, bool isHeartrate, bool isBotto
       slot[5].curDigit = 13;
     }
   }
+  #endif
 }
 
 static void show_heart_rate(const bool isBbottom) {
@@ -368,7 +370,9 @@ static void set_progress_slots(uint16_t progress, bool bottom) {
         slot[2].curDigit = progressoffset+9;
         slot[3].curDigit = progressoffset+9;
       }
-    } else if (progress > 999) {
+    }
+    #ifndef PBL_ROUND
+    else if (progress > 999) {
       slot[4].curDigit = 9;
       slot[5].curDigit = 9;
       slot[6].curDigit = 9;
@@ -386,6 +390,7 @@ static void set_progress_slots(uint16_t progress, bool bottom) {
       slot[6].curDigit = units;
       slot[7].curDigit = '%';
     }
+    #endif
 
     const bool cheeky = preferences_cheeky();
 
@@ -459,7 +464,9 @@ static void set_progress_slots(uint16_t progress, bool bottom) {
       slot[1].curDigit = 'O';
       slot[2].curDigit = 'A';
       slot[3].curDigit = 'L';
-    } else if (cheeky && progress >= 78) {
+    }
+    #ifndef PBL_ROUND
+    else if (cheeky && progress >= 78) {
       slot[4].curDigit = 'N';
       slot[5].curDigit = 'I';
       slot[6].curDigit = 'C';
@@ -510,6 +517,7 @@ static void set_progress_slots(uint16_t progress, bool bottom) {
       slot[6].curDigit = 'T';
       slot[7].curDigit = 'T';
     }
+    #endif
   }
 }
 #endif
@@ -631,21 +639,17 @@ static void set_big_date(const bool weekDay, const bool euDate) {
 static void handle_tick(struct tm *t, const TimeUnits units_changed) {
   const Preferences* const prefs = get_preferences();
 
-  static uint8_t ho, mi, da, mo;
-
   if (state::get().splashEnded && !state::get().initial_anim) {
     if (animation_is_scheduled(anim)){
       animation_unschedule(anim);
       animation_destroy(anim);
     }
 
-    ho = get_display_hour(t->tm_hour);
-    mi = t->tm_min;
-    da = t->tm_mday;
-    mo = t->tm_mon+1;
-
-    #ifdef TEST_TICK
-    ho = 8+(mi%4);
+    const uint8_t ho = get_display_hour(t->tm_hour);
+    const uint8_t mi = t->tm_min;
+    #ifndef PBL_ROUND
+    const uint8_t da = t->tm_mday;
+    const uint8_t mo = t->tm_mon+1;
     #endif
 
     uint8_t localeid = 0;
@@ -661,9 +665,6 @@ static void handle_tick(struct tm *t, const TimeUnits units_changed) {
       }
 
       uint8_t weekdaynum = ((int)weekday_buffer[0])-0x30;
-      #ifdef TEST_TICK
-      weekdaynum = (int)mi%7;
-      #endif
       strcpy(weekdayname, weekdays[localeid][weekdaynum]);
     }
 
@@ -694,13 +695,20 @@ static void handle_tick(struct tm *t, const TimeUnits units_changed) {
       slot[i].prevDigit = slot[i].curDigit;
     }
 
-    for (int dig = 0; dig < constants::num_slots; dig++) {
-      if (slot[dig].prevDigit == 10 || slot[dig].prevDigit == 12) {
-        slot[dig].curDigit = 11;
-      } else {
-        slot[dig].curDigit = 10;
+    // Change the filler blocks
+    #ifdef PBL_ROUND
+    static uint8_t previous_min = 99;
+    if (mi != previous_min) {
+      previous_min = mi;
+      for (int dig = constants::num_slots_main; dig < constants::num_slots; dig++) {
+        if (slot[dig].prevDigit == 10 || slot[dig].prevDigit == 12) {
+          slot[dig].curDigit = 11;
+        } else {
+          slot[dig].curDigit = 10;
+        }
       }
     }
+    #endif
 
     if (ho/10 > 0 || prefs->leading_zero) {
       slot[0].curDigit = ho/10;
@@ -727,6 +735,7 @@ static void handle_tick(struct tm *t, const TimeUnits units_changed) {
       #endif
 
       default:
+        #ifndef PBL_ROUND
         if (!prefs->eu_date) {
           if (prefs->weekday) {
             slot[4].curDigit = (uint8_t) weekdayname[0];
@@ -757,6 +766,7 @@ static void handle_tick(struct tm *t, const TimeUnits units_changed) {
             }
           }
         }
+        #endif
         break;
     }
 
@@ -815,7 +825,7 @@ static void tap_handler(AccelAxisType axis, int32_t direction) {
     state::setInShakeMode(true);
     setup_animation();
     animation_schedule(anim);
-    app_timer_register(3000, handle_timer, NULL);
+    app_timer_register(30000, handle_timer, NULL);
   }
 }
 
@@ -827,11 +837,15 @@ void init_slot(const int i, Layer *parent) {
   s->prevDigit = startDigit[i];
   s->curDigit = startDigit[i];
 
-  if ((i < 4 || i >= 8) && i < 14) {
+  #ifdef PBL_ROUND
+  s->sizeType = 1; // Big
+  #else
+  if (i < constants::num_slots_main) {
     s->sizeType = 1; // Big
   } else {
     s->sizeType = 2; // Small
   }
+  #endif
 
   s->layer = layer_create_with_data(slots::frame(i), sizeof(slots::digit *));
   *(slots::digit **)layer_get_data(s->layer) = s;

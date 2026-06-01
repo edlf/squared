@@ -1,5 +1,5 @@
-#ifndef PREFERENCES_H
-#define PREFERENCES_H
+#ifndef PREFERENCES_HPP
+#define PREFERENCES_HPP
 
 #include "pebble.h"
 #include "utils.hpp"
@@ -54,4 +54,4 @@ bool preferences_cheeky();
 bool preferences_contrast();
 uint32_t preferences_animation_time();
 
-#endif /* end of include guard: PREFERENCES_H */
+#endif // PREFERENCES_HPP

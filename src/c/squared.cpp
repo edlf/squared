@@ -7,7 +7,6 @@
  */
 
 #include "pebble.hpp"
-#include "utils.hpp"
 #include "preferences.hpp"
 #include "resources.hpp"
 #include "squared_slots.hpp"
@@ -288,6 +287,22 @@ static void update_step_goal() {
   }
 }
 
+static void fill_progress_slots(const int i) {
+  slot[0].curDigit = progress_slots_words[i][0];
+  slot[1].curDigit = progress_slots_words[i][1];
+  slot[2].curDigit = progress_slots_words[i][2];
+  slot[3].curDigit = progress_slots_words[i][3];
+}
+
+#ifndef PBL_ROUND
+static void fill_progress_slots_small(const int i) {
+  slot[4].curDigit = progress_slots_words_small[i][0];
+  slot[5].curDigit = progress_slots_words_small[i][1];
+  slot[6].curDigit = progress_slots_words_small[i][2];
+  slot[7].curDigit = progress_slots_words_small[i][3];
+}
+#endif
+
 static void set_progress_slots(uint16_t progress, bool bottom) {
   static uint8_t digits[4];
   static uint8_t progressoffset;
@@ -395,127 +410,55 @@ static void set_progress_slots(uint16_t progress, bool bottom) {
     const bool cheeky = preferences_cheeky();
 
     if (cheeky && progress >= 999) {
-      slot[0].curDigit = 'F';
-      slot[1].curDigit = '*';
-      slot[2].curDigit = 'C';
-      slot[3].curDigit = 'K';
+      fill_progress_slots(0);
     } else if (cheeky && progress >= 750) {
-      slot[0].curDigit = 'Y';
-      slot[1].curDigit = 'O';
-      slot[2].curDigit = 'L';
-      slot[3].curDigit = 'O';
+      fill_progress_slots(1);
     } else if (cheeky && progress >= 500) {
-      slot[0].curDigit = 'W';
-      slot[1].curDigit = 'H';
-      slot[2].curDigit = 'A';
-      slot[3].curDigit = 'T';
+      fill_progress_slots(2);
     } else if (cheeky && progress >= 400) {
-      slot[0].curDigit = 'T';
-      slot[1].curDigit = 'I';
-      slot[2].curDigit = 'L';
-      slot[3].curDigit = 'T';
+      fill_progress_slots(3);
     } else if (cheeky && progress >= 300) {
-      slot[0].curDigit = 'O';
-      slot[1].curDigit = 'M';
-      slot[2].curDigit = 'F';
-      slot[3].curDigit = 'G';
+      fill_progress_slots(4);
     } else if (cheeky && progress >= 250) {
-      slot[0].curDigit = 'S';
-      slot[1].curDigit = 'T';
-      slot[2].curDigit = 'A';
-      slot[3].curDigit = 'R';
+      fill_progress_slots(5);
     } else if (cheeky && progress >= 220) {
-      slot[0].curDigit = 'H';
-      slot[1].curDigit = 'O';
-      slot[2].curDigit = 'L';
-      slot[3].curDigit = 'Y';
+      fill_progress_slots(6);
     } else if (cheeky && progress >= 200) {
-      slot[0].curDigit = 'G';
-      slot[1].curDigit = 'A';
-      slot[2].curDigit = 'S';
-      slot[3].curDigit = 'P';
+      fill_progress_slots(7);
     } else if (cheeky && progress >= 175) {
-      slot[0].curDigit = 'D';
-      slot[1].curDigit = 'A';
-      slot[2].curDigit = 'N';
-      slot[3].curDigit = 'G';
+      fill_progress_slots(8);
     } else if (cheeky && progress >= 150) {
-      slot[0].curDigit = 'W';
-      slot[1].curDigit = 'H';
-      slot[2].curDigit = 'O';
-      slot[3].curDigit = 'A';
+      fill_progress_slots(9);
     } else if (cheeky && progress >= 130) {
-      slot[0].curDigit = 'S';
-      slot[1].curDigit = 'W';
-      slot[2].curDigit = 'A';
-      slot[3].curDigit = 'G';
+      fill_progress_slots(10);
     } else if (cheeky && progress >= 115) {
-      slot[0].curDigit = 'C';
-      slot[1].curDigit = 'O';
-      slot[2].curDigit = 'O';
-      slot[3].curDigit = 'L';
+      fill_progress_slots(11);
     } else if (cheeky && progress >= 105) {
-      slot[0].curDigit = 'Y';
-      slot[1].curDigit = 'E';
-      slot[2].curDigit = 'A';
-      slot[3].curDigit = 'H';
+      fill_progress_slots(12);
     } else if (cheeky && progress >= 100) {
-      slot[0].curDigit = 'G';
-      slot[1].curDigit = 'O';
-      slot[2].curDigit = 'A';
-      slot[3].curDigit = 'L';
+      fill_progress_slots(13);
     }
     #ifndef PBL_ROUND
     else if (cheeky && progress >= 78) {
-      slot[4].curDigit = 'N';
-      slot[5].curDigit = 'I';
-      slot[6].curDigit = 'C';
-      slot[7].curDigit = 'E';
+      fill_progress_slots_small(0);
     } else if (cheeky && progress >= 62) {
-      slot[4].curDigit = 'N';
-      slot[5].curDigit = 'E';
-      slot[6].curDigit = 'A';
-      slot[7].curDigit = 'T';
+      fill_progress_slots_small(1);
     } else if (cheeky && progress >= 45) {
-      slot[4].curDigit = 'G';
-      slot[5].curDigit = 'O';
-      slot[6].curDigit = 'O';
-      slot[7].curDigit = 'D';
+      fill_progress_slots_small(2);
     } else if (cheeky && progress >= 28) {
-      slot[4].curDigit = 'O';
-      slot[5].curDigit = 'K';
-      slot[6].curDigit = 'A';
-      slot[7].curDigit = 'Y';
+      fill_progress_slots_small(3);
     } else if (cheeky && progress >= 16) {
-      slot[4].curDigit = 'W';
-      slot[5].curDigit = 'E';
-      slot[6].curDigit = 'L';
-      slot[7].curDigit = 'L';
+      fill_progress_slots_small(4);
     } else if (cheeky && progress >= 12) {
-      slot[4].curDigit = 'A';
-      slot[5].curDigit = 'H';
-      slot[6].curDigit = 'E';
-      slot[7].curDigit = 'M';
+      fill_progress_slots_small(5);
     } else if (cheeky && progress >= 8) {
-      slot[4].curDigit = 'L';
-      slot[5].curDigit = 'A';
-      slot[6].curDigit = 'M';
-      slot[7].curDigit = 'E';
+      fill_progress_slots_small(6);
     } else if (cheeky) {
-      slot[4].curDigit = 'O';
-      slot[5].curDigit = 'U';
-      slot[6].curDigit = 'C';
-      slot[7].curDigit = 'H';
+      fill_progress_slots_small(7);
     } else if (!cheeky) {
-      slot[4].curDigit = 'S';
-      slot[5].curDigit = 'T';
-      slot[6].curDigit = 'E';
-      slot[7].curDigit = 'P';
+      fill_progress_slots_small(8);
     } else {
-      slot[4].curDigit = 'B';
-      slot[5].curDigit = 'A';
-      slot[6].curDigit = 'T';
-      slot[7].curDigit = 'T';
+      fill_progress_slots_small(9);
     }
     #endif
   }
@@ -634,6 +577,16 @@ static void set_big_date(const bool weekDay, const bool euDate) {
     slot[2].curDigit = da/10;
     slot[3].curDigit = da%10;
   }
+}
+
+static uint8_t get_display_hour(const uint8_t hour) {
+    if (clock_is_24h_style() || preferences_force_24_hour()) {
+        return hour;
+    }
+
+    uint8_t display_hour = hour % 12;
+
+    return display_hour ? display_hour : 12;
 }
 
 static void handle_tick(struct tm *t, const TimeUnits units_changed) {

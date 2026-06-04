@@ -300,6 +300,11 @@ module.exports = [
     "defaultValue": true
   }, {
     "type": "toggle",
+    "messageKey": "force24Hour",
+    "label": "Use 24 hour (ignores locale setting)",
+    "defaultValue": false
+  }, {
+    "type": "toggle",
     "messageKey": "center",
     "label": "Ceneter-Align Date",
     "defaultValue": false

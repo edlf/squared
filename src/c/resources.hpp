@@ -617,10 +617,11 @@ constexpr uint8_t progress_top_seq[19] = {
 };
 
 constexpr uint8_t startDigit[constants::num_slots] = {
+  11,12,12,11 // 2x hour, 2x mins
 #ifdef PBL_ROUND
-  11,12,12,11,12,11,12,11,11,12,10,13 // 2x h, 2x m, 2x filler top, 4x filler sides, 2x filler bottom
+  ,12,11,12,11,11,12,10,13 // 2x filler top, 4x filler sides, 2x filler bottom
 #else
-  11,12,12,11,11,12,10,13 // 2x h, 2x m, 4x date
+  ,11,12,10,13 // 4x date/health progress
 #endif
 };
 
@@ -668,6 +669,40 @@ constexpr uint8_t shadowtable[256] = {
 
 // alpha should only be 0b??111111 where ?? = 00 (full shade), 01 (much shade), 10 (some shade), 11 (none shade)
 constexpr uint8_t alpha = 0b10111111;
+
+#ifdef PBL_HEALTH
+constexpr char progress_slots_words[14][5] = {
+  "F*CK",
+  "YOLO",
+  "WHAT",
+  "TILT",
+  "OMFG",
+  "STAR",
+  "HOLY",
+  "GASP",
+  "DANG",
+  "WHOA",
+  "SWAG",
+  "COOL",
+  "YEAH",
+  "GOAL"
+};
+
+#ifndef PBL_ROUND
+constexpr char progress_slots_words_small[10][5] = {
+  "NICE",
+  "NEAT",
+  "GOOD",
+  "OKAY",
+  "WELL",
+  "AHEM",
+  "LAME",
+  "OUCH",
+  "STEP",
+  "BATT"
+};
+#endif
+#endif
 
 #ifdef PBL_COLOR
 constexpr uint8_t NUMBER_OF_BG_PRESETS = 15;

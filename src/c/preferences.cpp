@@ -5,6 +5,7 @@ static Preferences prefs;
 
 static void preferences_set_defaults(){
    prefs.eu_date = true;
+   prefs.force_24hour = false;
    prefs.quick_start = false;
    prefs.leading_zero = false;
    prefs.background_color = GColorBlackARGB8;
@@ -36,8 +37,17 @@ static void preferences_set_defaults(){
    #endif
 }
 
+static uint8_t get_GColor8FromInt32(const int32_t color) {
+  const uint8_t a = 192;
+  const uint8_t r = (((color >> 16) & 0xFF) >> 6) << 4;
+  const uint8_t g = (((color >>  8) & 0xFF) >> 6) << 2;
+  const uint8_t b = (((color >>  0) & 0xFF) >> 6) << 0;
+  return a+r+g+b;
+}
+
 static void preferences_load_dict(const DictionaryIterator *iter) {
   Tuple *eu_date_t = dict_find(iter, MESSAGE_KEY_euDate);
+  Tuple *force_24hour_t = dict_find(iter, MESSAGE_KEY_force24Hour);
   Tuple *quick_start_t = dict_find(iter, MESSAGE_KEY_quickStart);
   Tuple *leading_zero_t = dict_find(iter, MESSAGE_KEY_leadingZero);
   Tuple *background_color_t = dict_find(iter, MESSAGE_KEY_backgroundColor);
@@ -69,6 +79,7 @@ static void preferences_load_dict(const DictionaryIterator *iter) {
   #endif
 
   if (eu_date_t) {             prefs.eu_date =                eu_date_t->value->int8; }
+  if (force_24hour_t) {        prefs.force_24hour =           force_24hour_t->value->int8; }
   if (quick_start_t) {         prefs.quick_start =            quick_start_t->value->int8; }
   if (leading_zero_t) {        prefs.leading_zero =           leading_zero_t->value->int8; }
   if (background_color_t) {    prefs.background_color =       get_GColor8FromInt32(background_color_t->value->int32); }
@@ -158,4 +169,8 @@ uint32_t preferences_animation_time() {
   } else {
     return 2000;
   }
+}
+
+bool preferences_force_24_hour() {
+  return prefs.force_24hour;
 }

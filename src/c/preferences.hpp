@@ -2,13 +2,13 @@
 #define PREFERENCES_HPP
 
 #include "pebble.h"
-#include "utils.hpp"
 #include "resources.hpp"
 
 #define PREFERENCES_KEY 0
 
 typedef struct {
   bool     eu_date; // true == MM/DD, false == DD/MM
+  bool     force_24hour; // Ignore locale, use 24 hour
   bool     quick_start;
   bool     leading_zero; // true == replaces leading Zero for hour, day, month with a "cycler"
   uint8_t  background_color;
@@ -53,5 +53,6 @@ bool preferences_bt_vibe();
 bool preferences_cheeky();
 bool preferences_contrast();
 uint32_t preferences_animation_time();
+bool preferences_force_24_hour();
 
 #endif // PREFERENCES_HPP

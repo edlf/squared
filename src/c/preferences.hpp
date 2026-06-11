@@ -37,7 +37,7 @@ typedef struct {
   uint8_t  bg_preset;
   uint8_t  number_preset;
   uint8_t  ornament_preset;
-  #endif
+  #endif // PBL_COLOR
 } Preferences;
 
 // Loads preferences from storage or inits defaults if those dont exist

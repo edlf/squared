@@ -15,13 +15,13 @@ void init() {
 
   #ifdef PBL_COLOR
   state_struct.previous_contrastmode = false;
-  #endif
+  #endif // PBL_COLOR
 
   #ifdef PBL_HEALTH
   state_struct.stepgoal = 0;
   state_struct.stepprogress = 0;
   state_struct.heartrate = 0;
-  #endif
+  #endif // PBL_HEALTH
 }
 
 void update() {
@@ -45,7 +45,7 @@ void update() {
   } else {
     state_struct.background_color = GColorBlack;
   }
-  #endif
+  #endif // PBL_COLOR
 
   if (preferences->quick_start) {
     state_struct.animation_time = 1500;
@@ -78,7 +78,7 @@ void setChargeState(const bool cs) {
 void setPreviousContrastMode(const bool pcm) {
   state_struct.previous_contrastmode = pcm;
 }
-#endif
+#endif // PBL_COLOR
 
 const state_t& get() {
   return state_struct;
@@ -97,5 +97,5 @@ void updateStepProgress(const HealthValue stepcount) {
   state_struct.stepprogress = (((float)stepcount/(float)state_struct.stepgoal)*100);
 }
 
-#endif
+#endif // PBL_HEALTH
 } // namespace state

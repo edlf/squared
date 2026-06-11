@@ -34,7 +34,7 @@ static void preferences_set_defaults(){
    prefs.bg_preset = 0;
    prefs.number_preset = 1;
    prefs.ornament_preset = 2;
-   #endif
+   #endif // PBL_COLOR
 }
 
 static uint8_t get_GColor8FromInt32(const int32_t color) {
@@ -76,7 +76,7 @@ static void preferences_load_dict(const DictionaryIterator *iter) {
   Tuple *background_preset_t = dict_find(iter, MESSAGE_KEY_backgroundPreset);
   Tuple *number_preset_t = dict_find(iter, MESSAGE_KEY_numbersPreset);
   Tuple *ornament_preset_t = dict_find(iter, MESSAGE_KEY_ornamentsPreset);
-  #endif
+  #endif // PBL_COLOR
 
   if (eu_date_t) {             prefs.eu_date =                eu_date_t->value->int8; }
   if (force_24hour_t) {        prefs.force_24hour =           force_24hour_t->value->int8; }
@@ -126,7 +126,7 @@ static void preferences_load_dict(const DictionaryIterator *iter) {
       prefs.ornament_variation = character_variation_presets[prefs.ornament_preset];
     }
   }
-  #endif
+  #endif // PBL_COLOR
 }
 
 const Preferences* get_preferences() {

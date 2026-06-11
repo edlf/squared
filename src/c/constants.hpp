@@ -14,7 +14,7 @@ constexpr GSize screen_size = {PBL_DISPLAY_WIDTH, PBL_DISPLAY_HEIGHT};
 #else
 // "Standard" Pebble resolution
 constexpr GSize screen_size = {144, 168};
-#endif
+#endif // PBL_DISPLAY_WIDTH, PBL_DISPLAY_HEIGHT
 
 // Drawing constants
 // Base tile size
@@ -48,7 +48,7 @@ constexpr GSize origin = {(screen_size.w - active_area.w) / 2,
 // TODO: Fix new bigger round
 constexpr GSize origin = {(screen_size.w - active_area.w) / 2,
                           static_cast<int16_t>(tile_size * 2.2)};
-#endif
+#endif // PBL_RECT
 
 constexpr uint8_t num_slots_main = 4;
 constexpr GRect frames_main_digits[num_slots_main] = {

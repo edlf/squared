@@ -30,6 +30,6 @@ GRect frame(const int8_t slot_no) {
     return constants::frames_secondary_digits[digit];
   };
 }
-#endif
+#endif // PBL_ROUND
 
 } //namespace slots

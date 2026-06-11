@@ -622,7 +622,7 @@ constexpr uint8_t startDigit[constants::num_slots] = {
   ,12,11,12,11,11,12,10,13 // 2x filler top, 4x filler sides, 2x filler bottom
 #else
   ,11,12,10,13 // 4x date/health progress
-#endif
+#endif // PBL_ROUND
 };
 
 constexpr uint8_t variation[100] = {
@@ -701,8 +701,8 @@ constexpr char progress_slots_words_small[10][5] = {
   "STEP",
   "BATT"
 };
-#endif
-#endif
+#endif // PBL_ROUND
+#endif // PBL_HEALTH
 
 #ifdef PBL_COLOR
 constexpr uint8_t NUMBER_OF_BG_PRESETS = 15;

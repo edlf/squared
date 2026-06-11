@@ -301,7 +301,7 @@ static void fill_progress_slots_small(const int i) {
   slot[6].curDigit = progress_slots_words_small[i][2];
   slot[7].curDigit = progress_slots_words_small[i][3];
 }
-#endif
+#endif // PBL_ROUND
 
 static void set_progress_slots(uint16_t progress, bool bottom) {
   static uint8_t digits[4];
@@ -463,7 +463,7 @@ static void set_progress_slots(uint16_t progress, bool bottom) {
     #endif
   }
 }
-#endif
+#endif // PBL_HEALTH
 
 static void set_battery_slots(const bool bottom){
   static uint8_t digits[4];
@@ -663,8 +663,11 @@ static void handle_tick(struct tm *t, const TimeUnits units_changed) {
     }
     #endif
 
+    // Check if we have a digit, or we want a leading 0 for the hour
     if (ho/10 > 0 || prefs->leading_zero) {
       slot[0].curDigit = ho/10;
+    } else {
+      slot[0].curDigit = startDigit[0];
     }
 
     slot[1].curDigit = ho%10;

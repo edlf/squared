@@ -19,4 +19,4 @@ typedef struct {
 GRect frame(const int8_t slot_no);
 };
 
-#endif
+#endif // SQUARED_SLOTS_H

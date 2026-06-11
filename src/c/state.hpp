@@ -20,13 +20,13 @@ typedef struct {
 
   #ifdef PBL_COLOR
   bool previous_contrastmode;
-  #endif
+  #endif // PBL_COLOR
 
   #ifdef PBL_HEALTH
   HealthValue stepgoal;
   uint16_t stepprogress;
   HealthValue heartrate;
-  #endif
+  #endif // PBL_HEALTH
 } state_t;
 
 void init(void);
@@ -39,7 +39,7 @@ void setInShakeMode(const bool);
 void setChargeState(const bool);
 #ifdef PBL_COLOR
 void setPreviousContrastMode(const bool);
-#endif
+#endif // PBL_COLOR
 
 const state_t& get(void);
 
@@ -47,7 +47,7 @@ const state_t& get(void);
 void setHeartRate(const HealthValue);
 void setStepGoal(const HealthValue);
 void updateStepProgress(const HealthValue);
-#endif
+#endif // PBL_HEALTH
 } // namespace state
 
-#endif
+#endif // STATE_H
